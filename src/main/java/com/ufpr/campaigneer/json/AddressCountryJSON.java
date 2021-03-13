@@ -1,6 +1,7 @@
 package com.ufpr.campaigneer.json;
 
 import com.ufpr.campaigneer.model.AddressCountry;
+import com.ufpr.campaigneer.model.AddressState;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -10,7 +11,7 @@ import com.ufpr.campaigneer.model.AddressCountry;
 
 public class AddressCountryJSON {
 
-    private Integer id;
+    private int id;
     private String name;
     private String code;
 
@@ -24,9 +25,7 @@ public class AddressCountryJSON {
 
     public static AddressCountry map(AddressCountryJSON json) {
         AddressCountry result = new AddressCountry();
-        if (json.getId() != null) {
-            result.setId(json.getId());
-        }
+        result.setId(json.getId());
         result.setCode(json.getCode());
         result.setName(json.getName());
         return result;
@@ -49,11 +48,11 @@ public class AddressCountryJSON {
                 '}';
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 

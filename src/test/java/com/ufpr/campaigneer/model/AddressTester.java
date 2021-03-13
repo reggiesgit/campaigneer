@@ -3,6 +3,7 @@ package com.ufpr.campaigneer.model;
 import com.ufpr.campaigneer.dao.AddressDAO;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.*;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 
 import java.sql.SQLException;
 
@@ -23,33 +24,68 @@ public class AddressTester {
     @Test
     @Order(1)
     public void createCountry() throws SQLException {
-        AddressCountry country = new AddressCountry("Seventyland", "70");
-
+        AddressCountry country = new AddressCountry("Republic of Testing", "RT");
         AddressCountry created = (AddressCountry) dao.createCountry(country);
-
         assertTrue(created.getId() > 0);
     }
 
     @Test
     @Order(2)
-    public void breakCountryUniqueCodeConstraint() {
-        AddressCountry country = new AddressCountry("Seventyland", "70");
+    public void createState() throws SQLException {
+        AddressCountry country = dao.findByCountryCode("RT");
+        AddressState state = new AddressState("South Testland", "ST", country);
+        AddressState created = (AddressState) dao.createState(state);
+        assertTrue(created.getId() > 0);
+    }
 
+    @Test
+    @Order(3)
+    public void createCity() throws SQLException {
+        AddressState state = dao.findByStateCodeAndCountryCode("ST", "RT");
+        assertTrue(state.getId() > 0);
+
+        AddressCity city = new AddressCity("Testtingtown", state);
+        AddressCity created = (AddressCity) dao.createCity(city);
+        assertTrue(created.getId() > 0);
+    }
+
+    @Test
+    @Order(4)
+    public void breakCountryForeignKeyConstraint() {
+        AddressCountry bound = dao.findByCountryCode("RT");
+        assertThrows(ConstraintViolationException.class, () -> {
+            dao.deleteCountry(bound);
+        });
+    }
+
+    @Test
+    @Order(5)
+    public void breakCountryUniqueCodeConstraint() {
+        AddressCountry country = new AddressCountry("Republic of Testing", "RT");
         assertThrows(ConstraintViolationException.class, () -> {
             AddressCountry created = dao.createCountry(country);
         });
     }
 
     @Test
-    @Order(3)
+    @Order(6)
+    public void breakStateForeignKeyConstraint() {
+        AddressState bound = dao.findByStateCodeAndCountryCode("ST", "RT");
+        assertThrows(ConstraintViolationException.class, () -> {
+            dao.deleteState(bound);
+        });
+    }
+
+    @Test
+    @Order(7)
     public void updateCountry() {
         AddressCountry original = new AddressCountry();
-        original = dao.findCountryByCode("70");
+        original = dao.findByCountryCode("RT");
         assertNotNull(original.getName());
 
         AddressCountry pirate = new AddressCountry();
         pirate.setId(original.getId());
-        pirate.setName("Seventeensburg");
+        pirate.setName("Independent Republic of Testing");
         pirate.setCode(original.getCode());
 
         AddressCountry current = new AddressCountry();
@@ -59,25 +95,99 @@ public class AddressTester {
     }
 
     @Test
-    @Order(4)
-    public void deleteCountry() {
-        AddressCountry toRemove = new AddressCountry();
-        toRemove = dao.findCountryByCode("70");
+    @Order(8)
+    public void updateState() {
+        AddressState original = new AddressState();
+        original = dao.findByStateCodeAndCountryCode("ST", "RT");
+        assertNotNull(original.getName());
+
+        AddressState pirate = new AddressState();
+        pirate.setId(original.getId());
+        pirate.setName("North Testland");
+        pirate.setCode(original.getCode());
+
+        AddressState current = new AddressState();
+        current = dao.updateState(pirate);
+        assertNotEquals(original, current);
+    }
+
+    @Test
+    @Order(9)
+    public void updateCity() {
+        AddressCity original = new AddressCity();
+        original = dao.findByCityNameAndStateCode("Testtingtown", "ST");
+        assertNotNull(original.getName());
+
+        AddressState pirate = new AddressState();
+        pirate.setId(original.getId());
+        pirate.setName("TesttingBurg");
+
+        AddressState current = new AddressState();
+        current = dao.updateState(pirate);
+        assertNotEquals(original, current);
+    }
+
+    @Test
+    @Order(10)
+    public void deleteCity() {
+        AddressCity toRemove = new AddressCity();
+        toRemove = dao.findByCityNameAndStateCode("Testtingburg", "ST");
 
         assertNotNull(toRemove);
 
-        dao.deleteCountry(toRemove);
-        AddressCountry empty = new AddressCountry();
-        empty = dao.findCountryByCode("70");
+        dao.deleteCity(toRemove);
+        AddressCity empty = new AddressCity();
+        empty = dao.findByCityNameAndStateCode("Testtingburg", "ST");
 
         assertNull(empty);
     }
 
     @Test
-    @Order(5)
-    public void findNoCountry() {
-        AddressCountry empty = dao.findCountryByCode("70");
+    @Order(11)
+    public void deleteState() {
+        AddressState toRemove = new AddressState();
+        toRemove = dao.findByStateCodeAndCountryCode("ST", "RT");
 
+        assertNotNull(toRemove);
+
+        dao.deleteState(toRemove);
+        AddressState empty = new AddressState();
+        empty = dao.findByStateCodeAndCountryCode("ST", "RT");
+
+        assertNull(empty);
+    }
+
+    @Test
+    @Order(12)
+    public void deleteCountry() {
+        AddressCountry toRemove = new AddressCountry();
+        toRemove = dao.findByCountryCode("RT");
+
+        assertNotNull(toRemove);
+
+        dao.deleteCountry(toRemove);
+        AddressCountry empty = new AddressCountry();
+        empty = dao.findByCountryCode("RT");
+
+        assertNull(empty);
+    }
+
+    @Test
+    @Order(13)
+    public void findNoCity() {
+        assertNull(dao.findByCityNameAndStateCode("Testtingburg", "ST"));
+    }
+
+    @Test
+    @Order(14)
+    public void findNoState() {
+        assertNull(dao.findByStateCodeAndCountryCode("ST", "RT"));
+    }
+
+    @Test
+    @Order(15)
+    public void findNoCountry() {
+        AddressCountry empty = dao.findByCountryCode("RT");
         assertNull(empty);
     }
 
