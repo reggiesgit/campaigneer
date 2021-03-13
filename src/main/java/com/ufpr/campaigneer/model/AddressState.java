@@ -9,6 +9,7 @@ import javax.persistence.*;
  */
 
 @Entity
+@Table(name = "address_state")
 public class AddressState {
 
     @Id

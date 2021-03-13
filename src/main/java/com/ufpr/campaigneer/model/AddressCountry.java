@@ -1,7 +1,5 @@
 package com.ufpr.campaigneer.model;
 
-import com.ufpr.campaigneer.json.AddressCountryJSON;
-
 import javax.persistence.*;
 
 /**

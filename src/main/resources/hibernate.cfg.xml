@@ -22,6 +22,5 @@
         <mapping class="com.ufpr.campaigneer.model.AddressCountry"/>
         <mapping class="com.ufpr.campaigneer.model.AddressState"/>
         <mapping class="com.ufpr.campaigneer.model.AddressCity"/>
-        <mapping class="com.ufpr.campaigneer.model.Address"/>
     </session-factory>
 </hibernate-configuration>

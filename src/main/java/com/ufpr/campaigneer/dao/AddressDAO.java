@@ -110,9 +110,7 @@ public class AddressDAO {
             session.beginTransaction();
             Query query = session
                     .createQuery("from AddressState state " +
-                                        "join AddressCountry country " +
-                                    "where country.id = state.country.id " +
-                                        "and state.code = :stateCode " +
+                                    "where state.code = :stateCode " +
                                         "and country.code = :countryCode ");
             query.setParameter("stateCode", stateCode);
             query.setParameter("countryCode", countryCode);
@@ -166,9 +164,7 @@ public class AddressDAO {
             session.beginTransaction();
             Query query = session
                     .createQuery("from AddressCity city " +
-                                        "join AddressState state " +
-                                    "where state.id = city.state.id " +
-                                        "and city.name = :cityName " +
+                                    "where city.name = :cityName " +
                                         "and state.code = :stateCode ");
             query.setParameter("cityName", cityName);
             query.setParameter("stateCode", stateCode);

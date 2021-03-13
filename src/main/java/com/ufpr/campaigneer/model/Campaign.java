@@ -1,7 +1,6 @@
 package com.ufpr.campaigneer.model;
 
 import com.ufpr.campaigneer.enums.CampaignType;
-import org.hibernate.exception.DataException;
 
 import javax.persistence.*;
 import java.util.Date;

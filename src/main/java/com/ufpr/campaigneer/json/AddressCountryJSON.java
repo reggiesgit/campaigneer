@@ -1,7 +1,6 @@
 package com.ufpr.campaigneer.json;
 
 import com.ufpr.campaigneer.model.AddressCountry;
-import com.ufpr.campaigneer.model.AddressState;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)

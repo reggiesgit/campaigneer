@@ -6,8 +6,6 @@ import com.ufpr.campaigneer.model.AddressCountry;
 import com.ufpr.campaigneer.model.AddressState;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
-
 /**
  * Created by Regis Gaboardi (@gmail.com)
  * Provided with Love and IntelliJ IDEA for campaigneer.

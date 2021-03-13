@@ -4,7 +4,6 @@ import com.ufpr.campaigneer.enums.AddressType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -13,6 +12,7 @@ import java.util.List;
  */
 
 @Entity
+@Table(name = "address")
 public class Address {
 
     @Id
