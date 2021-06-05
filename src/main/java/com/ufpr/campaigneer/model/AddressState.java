@@ -1,6 +1,7 @@
 package com.ufpr.campaigneer.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -16,7 +17,9 @@ public class AddressState {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+    @Column(unique = true)
     private String code;
+    @NotNull
     @ManyToOne
     private AddressCountry country;
 

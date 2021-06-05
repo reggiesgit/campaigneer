@@ -1,6 +1,11 @@
-package com.ufpr.campaigneer.model;
+package com.ufpr.campaigneer.autotest;
 
 import com.ufpr.campaigneer.dao.AddressDAO;
+import com.ufpr.campaigneer.enums.AddressType;
+import com.ufpr.campaigneer.model.Address;
+import com.ufpr.campaigneer.model.AddressCity;
+import com.ufpr.campaigneer.model.AddressCountry;
+import com.ufpr.campaigneer.model.AddressState;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.*;
 
@@ -127,6 +132,43 @@ public class AddressTester {
 
     @Test
     @Order(10)
+    public void createAddress() {
+        Address address = new Address();
+        AddressCity city = dao.findByCityNameAndStateCode("TesttingBurg", "ST");
+        assertNotNull(city.getName());
+
+        address.setCity(city);
+        address.setAddressType(AddressType.BRAND_MAIN);
+        address.setComplement("SEPT");
+        address.setStreetName("Dr. Alcides Arcoverde");
+        address.setStreetNumber(1225);
+        address.setPostalCode("88088-888");
+
+        Address created = (Address) dao.createAddress(address);
+        assertTrue(created.getId() > 0);
+    }
+
+    @Test
+    @Order(11)
+    public void findAddress() {
+        Address address = dao.findByPostalCodeAndNumber("88088-888", 1225);
+        assertNotNull(address.getComplement());
+    }
+
+    @Test
+    @Order(12)
+    public void deleteAddress() {
+        Address toRemove = dao.findByPostalCodeAndNumber("88088-888", 1225);
+        assertNotNull(toRemove);
+
+        dao.deleteAddress(toRemove);
+        Address empty = dao.findByPostalCodeAndNumber("88088-888", 1225);
+
+        assertNull(empty);
+    }
+
+    @Test
+    @Order(13)
     public void deleteCity() {
         AddressCity toRemove = dao.findByCityNameAndStateCode("TesttingBurg", "ST");
 
@@ -139,7 +181,7 @@ public class AddressTester {
     }
 
     @Test
-    @Order(11)
+    @Order(14)
     public void deleteState() {
         AddressState toRemove = dao.findByStateCodeAndCountryCode("ST", "RT");
 
@@ -152,7 +194,7 @@ public class AddressTester {
     }
 
     @Test
-    @Order(12)
+    @Order(15)
     public void deleteCountry() {
         AddressCountry toRemove = dao.findByCountryCode("RT");
 
@@ -165,22 +207,21 @@ public class AddressTester {
     }
 
     @Test
-    @Order(13)
+    @Order(16)
     public void findNoCity() {
         assertNull(dao.findByCityNameAndStateCode("TesttingBurg", "ST"));
     }
 
     @Test
-    @Order(14)
+    @Order(17)
     public void findNoState() {
         assertNull(dao.findByStateCodeAndCountryCode("ST", "RT"));
     }
 
     @Test
-    @Order(15)
+    @Order(18)
     public void findNoCountry() {
         AddressCountry empty = dao.findByCountryCode("RT");
         assertNull(empty);
     }
-
 }

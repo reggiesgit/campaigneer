@@ -3,6 +3,7 @@ package com.ufpr.campaigneer.model;
 import com.ufpr.campaigneer.enums.CampaignType;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
@@ -13,12 +14,14 @@ import java.util.List;
  */
 
 @Entity
+@Table(name = "campaign")
 public class Campaign {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+    @NotNull
     @OneToOne
     private Brand promoter;
     private Date purchaseFrom;

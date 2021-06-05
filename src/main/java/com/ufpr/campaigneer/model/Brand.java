@@ -2,6 +2,7 @@ package com.ufpr.campaigneer.model;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -10,6 +11,7 @@ import java.util.List;
  */
 
 @Entity
+@Table(name = "brand")
 public class Brand {
 
     @Id
@@ -17,9 +19,9 @@ public class Brand {
     private int id;
     private String name;
     @OneToMany
-    private List<Address> address;
+    private Set<Address> address;
 
-    public Brand(int id, String name, List<Address> address) {
+    public Brand(int id, String name, Set<Address> address) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -45,11 +47,11 @@ public class Brand {
         this.name = name;
     }
 
-    public List<Address> getAddress() {
+    public Set<Address> getAddress() {
         return address;
     }
 
-    public void setAddress(List<Address> address) {
+    public void setAddress(Set<Address> address) {
         this.address = address;
     }
 }

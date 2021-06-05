@@ -43,17 +43,6 @@ public class AddressDAO {
         }
     }
 
-    public void deleteCountry(AddressCountry country) {
-        try {
-            session = HibernateUtils.initSession();
-            session.beginTransaction();
-            session.delete(country);
-        } finally {
-            session.getTransaction().commit();
-            session.close();
-        }
-    }
-
     public AddressCountry findByCountryCode(String code) {
         try {
             session = HibernateUtils.initSession();
@@ -63,6 +52,17 @@ public class AddressDAO {
             query.setMaxResults(1);
             AddressCountry country = (AddressCountry) query.uniqueResult();
             return country;
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
+    }
+
+    public void deleteCountry(AddressCountry country) {
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            session.delete(country);
         } finally {
             session.getTransaction().commit();
             session.close();
@@ -93,17 +93,6 @@ public class AddressDAO {
         }
     }
 
-    public void deleteState(AddressState state) {
-        try {
-            session = HibernateUtils.initSession();
-            session.beginTransaction();
-            session.delete(state);
-        } finally {
-            session.getTransaction().commit();
-            session.close();
-        }
-    }
-
     public AddressState findByStateCodeAndCountryCode(String stateCode, String countryCode) {
         try {
             session = HibernateUtils.initSession();
@@ -123,6 +112,17 @@ public class AddressDAO {
         }
     }
 
+    public void deleteState(AddressState state) {
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            session.delete(state);
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
+    }
+
     public AddressCity createCity(AddressCity city) {
         try {
             session = HibernateUtils.initSession();
@@ -131,17 +131,6 @@ public class AddressDAO {
             session.getTransaction().commit();
             return city;
         } finally {
-            session.close();
-        }
-    }
-
-    public void deleteCity(AddressCity city) {
-        try {
-            session = HibernateUtils.initSession();
-            session.beginTransaction();
-            session.delete(city);
-        } finally {
-            session.getTransaction().commit();
             session.close();
         }
     }
@@ -177,6 +166,17 @@ public class AddressDAO {
         }
     }
 
+    public void deleteCity(AddressCity city) {
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            session.delete(city);
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
+    }
+
     public Address createAddress(Address address) {
         try {
             session = HibernateUtils.initSession();
@@ -197,6 +197,25 @@ public class AddressDAO {
             session.getTransaction().commit();
             return address;
         } finally {
+            session.close();
+        }
+    }
+
+    public Address findByPostalCodeAndNumber(String cep, int number) {
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            Query query = session
+                    .createQuery("from Address address " +
+                                    "where address.postalCode = :postalCode " +
+                                        "and address.streetNumber = :streetNumber ");
+            query.setParameter("postalCode", cep);
+            query.setParameter("streetNumber", number);
+            query.setMaxResults(1);
+            Address address = (Address) query.uniqueResult();
+            return address;
+        } finally {
+            session.getTransaction().commit();
             session.close();
         }
     }

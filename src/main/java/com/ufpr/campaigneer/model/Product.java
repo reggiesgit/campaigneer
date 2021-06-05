@@ -3,6 +3,7 @@ package com.ufpr.campaigneer.model;
 import com.ufpr.campaigneer.enums.ClassOfGood;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -11,6 +12,7 @@ import javax.persistence.*;
  */
 
 @Entity
+@Table(name = "product")
 public class Product {
 
     @Id
@@ -20,6 +22,7 @@ public class Product {
     private String ean;
     @Enumerated
     private ClassOfGood classOfGood;
+    @NotNull
     @ManyToOne
     private Brand manufacturer;
 

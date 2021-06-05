@@ -1,6 +1,7 @@
 package com.ufpr.campaigneer.model;
 
 import com.ufpr.campaigneer.enums.AddressType;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -20,8 +21,12 @@ public class Address {
     private int id;
     @Enumerated
     private AddressType addressType;
+    @NotNull
+    @ColumnDefault("00000000")
     private String postalCode;
     private String streetName;
+    @NotNull
+    @ColumnDefault("0")
     private int streetNumber;
     private String complement;
     @NotNull

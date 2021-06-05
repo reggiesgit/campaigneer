@@ -9,18 +9,20 @@
         <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="connection.url">jdbc:mysql://localhost:3306/campaigneer_db?useTimezone=true&amp;serverTimezone=America/Sao_Paulo</property>
         <property name="connection.username">root</property>
-        <property name="connection.password">.Cymbaline</property>
+        <property name="connection.password">.Cymbal1n3#</property>
         <property name="hibernate.current_session_context_class">thread</property>
 
         <!-- SQL dialect -->
         <property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>
 
         <!-- Validate the database schema on startup -->
-        <property name="hbm2ddl.auto">validate</property>
+        <property name="hbm2ddl.auto">update</property>
 
         <!-- Names the annotated entity class -->
+        <mapping class="com.ufpr.campaigneer.model.Address"/>
         <mapping class="com.ufpr.campaigneer.model.AddressCountry"/>
         <mapping class="com.ufpr.campaigneer.model.AddressState"/>
         <mapping class="com.ufpr.campaigneer.model.AddressCity"/>
+        <mapping class="com.ufpr.campaigneer.model.Brand"/>
     </session-factory>
 </hibernate-configuration>
