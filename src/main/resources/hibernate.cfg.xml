@@ -11,6 +11,7 @@
         <property name="connection.username">root</property>
         <property name="connection.password">.Cymbal1n3#</property>
         <property name="hibernate.current_session_context_class">thread</property>
+        <property name="hibernate.physical_naming_strategy">com.ufpr.campaigneer.utils.SnakeCaseConversor</property>
 
         <!-- SQL dialect -->
         <property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>
