@@ -10,11 +10,8 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "address_country")
-public class AddressCountry {
+public class AddressCountry extends BasicModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
     private String name;
     @Column(unique = true)
     private String code;
@@ -26,14 +23,6 @@ public class AddressCountry {
 
     public AddressCountry() {
 
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {

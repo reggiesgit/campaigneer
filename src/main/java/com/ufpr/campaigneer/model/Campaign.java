@@ -15,11 +15,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "campaign")
-public class Campaign {
+public class Campaign extends BasicModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
     private String name;
     @NotNull
     @OneToOne

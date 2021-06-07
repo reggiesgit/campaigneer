@@ -14,11 +14,8 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "address")
-public class Address {
+public class Address extends BasicModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
     @Enumerated
     private AddressType addressType;
     @NotNull
@@ -43,14 +40,6 @@ public class Address {
     }
 
     public Address() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public AddressType getAddressType() {

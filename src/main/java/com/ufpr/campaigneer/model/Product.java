@@ -13,11 +13,8 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "product")
-public class Product {
+public class Product extends BasicModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
     private String name;
     private String ean;
     @Enumerated
@@ -26,8 +23,7 @@ public class Product {
     @ManyToOne
     private Brand manufacturer;
 
-    public Product(int id, String name, String ean, ClassOfGood classOfGood, Brand manufacturer) {
-        this.id = id;
+    public Product(String name, String ean, ClassOfGood classOfGood, Brand manufacturer) {
         this.name = name;
         this.ean = ean;
         this.classOfGood = classOfGood;
@@ -36,14 +32,6 @@ public class Product {
 
     public Product() {
 
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {

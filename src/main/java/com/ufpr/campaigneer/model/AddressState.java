@@ -11,11 +11,8 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "address_state")
-public class AddressState {
+public class AddressState extends BasicModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
     private String name;
     @Column(unique = true)
     private String code;
@@ -30,14 +27,6 @@ public class AddressState {
     }
 
     public AddressState() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {

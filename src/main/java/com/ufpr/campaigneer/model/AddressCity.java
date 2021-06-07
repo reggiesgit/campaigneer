@@ -11,11 +11,8 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "address_city")
-public class AddressCity {
+public class AddressCity extends BasicModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
     private String name;
     @NotNull
     @ManyToOne
@@ -27,14 +24,6 @@ public class AddressCity {
     }
 
     public AddressCity() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
