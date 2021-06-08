@@ -59,7 +59,7 @@ public class AddressTester {
     public void breakCountryForeignKeyConstraint() {
         AddressCountry bound = dao.findByCountryCode("RT");
         assertThrows(PersistenceException.class, () -> {
-            dao.deleteCountry(bound);
+            dao.removeCountry(bound);
         });
     }
 
@@ -77,19 +77,19 @@ public class AddressTester {
     public void breakStateForeignKeyConstraint() {
         AddressState bound = dao.findByStateCodeAndCountryCode("ST", "RT");
         assertThrows(PersistenceException.class, () -> {
-            dao.deleteState(bound);
+            dao.removeState(bound);
         });
     }
 
     @Test
     @Order(7)
     public void updateCountry() {
-        AddressCountry original = new AddressCountry();
-        original = dao.findByCountryCode("RT");
+        AddressCountry original = dao.findByCountryCode("RT");
         assertNotNull(original.getName());
 
         AddressCountry pirate = new AddressCountry();
         pirate.setId(original.getId());
+        pirate.setCreated(original.getCreated());
         pirate.setName("Independent Republic of Testing");
         pirate.setCode(original.getCode());
 
@@ -97,6 +97,7 @@ public class AddressTester {
         current = dao.updateCountry(pirate);
 
         assertNotEquals(original, current);
+        assertNotNull(current.getUpdated());
     }
 
     @Test
@@ -107,12 +108,14 @@ public class AddressTester {
 
         AddressState pirate = new AddressState();
         pirate.setId(original.getId());
+        pirate.setCreated(original.getCreated());
         pirate.setName("North Testland");
         pirate.setCode(original.getCode());
         pirate.setCountry(original.getCountry());
 
         AddressState current = dao.updateState(pirate);
         assertNotEquals(original, current);
+        assertNotNull(current.getUpdated());
     }
 
     @Test
@@ -123,11 +126,13 @@ public class AddressTester {
 
         AddressCity pirate = new AddressCity();
         pirate.setId(original.getId());
+        pirate.setCreated(original.getCreated());
         pirate.setName("TesttingBurg");
         pirate.setState(original.getState());
 
         AddressCity current = dao.updateCity(pirate);
         assertNotEquals(original, current);
+        assertNotNull(current.getUpdated());
     }
 
     @Test
@@ -162,66 +167,102 @@ public class AddressTester {
         assertNotNull(toRemove);
 
         dao.deleteAddress(toRemove);
-        Address empty = dao.findByPostalCodeAndNumber("88088-888", 1225);
+        Address deleted = dao.findByDeletedPostalCodeAndNumber("88088-888", 1225);
 
-        assertNull(empty);
+        assertNotNull(deleted.getDeleted());
     }
 
     @Test
     @Order(13)
     public void deleteCity() {
         AddressCity toRemove = dao.findByCityNameAndStateCode("TesttingBurg", "ST");
-
         assertNotNull(toRemove);
 
         dao.deleteCity(toRemove);
-        AddressCity empty = dao.findByCityNameAndStateCode("TesttingBurg", "ST");
+        AddressCity deleted = dao.findByDeletedCityNameAndStateCode("TesttingBurg", "ST");
 
-        assertNull(empty);
+        assertNotNull(deleted.getDeleted());
     }
 
     @Test
     @Order(14)
     public void deleteState() {
         AddressState toRemove = dao.findByStateCodeAndCountryCode("ST", "RT");
-
         assertNotNull(toRemove);
 
         dao.deleteState(toRemove);
-        AddressState empty = dao.findByStateCodeAndCountryCode("ST", "RT");
+        AddressState deleted = dao.findByDeletedStateCodeAndCountryCode("ST", "RT");
 
-        assertNull(empty);
+        assertNotNull(deleted.getDeleted());
     }
 
     @Test
     @Order(15)
     public void deleteCountry() {
         AddressCountry toRemove = dao.findByCountryCode("RT");
-
         assertNotNull(toRemove);
 
         dao.deleteCountry(toRemove);
-        AddressCountry empty = dao.findByCountryCode("RT");
+        AddressCountry deleted = dao.findByDeletedCountryCode("RT");
 
-        assertNull(empty);
+        assertNotNull(deleted.getDeleted());
     }
 
+   @Test
+   @Order(16)
+   public void removeAddress() {
+       Address toRemove = dao.findByDeletedPostalCodeAndNumber("88088-888", 1225);
+       assertNotNull(toRemove);
+
+       dao.removeAddress(toRemove);
+       assertNull(dao.findByDeletedPostalCodeAndNumber("88088-888", 1225));
+   }
+
+   @Test
+   @Order(17)
+   public void removeCity() {
+       AddressCity toRemove = dao.findByDeletedCityNameAndStateCode("TesttingBurg", "ST");
+       assertNotNull(toRemove);
+
+       dao.removeCity(toRemove);
+       assertNull(dao.findByDeletedCityNameAndStateCode("TesttingBurg", "ST"));
+   }
+
+   @Test
+   @Order(18)
+   public void removeState() {
+       AddressState toRemove = dao.findByDeletedStateCodeAndCountryCode("ST", "RT");
+       assertNotNull(toRemove);
+
+       dao.removeState(toRemove);
+       assertNull(dao.findByDeletedStateCodeAndCountryCode("ST", "RT"));
+   }
+
+   @Test
+   @Order(19)
+   public void removeCountry() {
+       AddressCountry toRemove = dao.findByDeletedCountryCode("RT");
+       assertNotNull(toRemove);
+
+       dao.removeCountry(toRemove);
+       assertNull(dao.findByDeletedCountryCode("RT"));
+   }
+
     @Test
-    @Order(16)
+    @Order(20)
     public void findNoCity() {
         assertNull(dao.findByCityNameAndStateCode("TesttingBurg", "ST"));
     }
 
     @Test
-    @Order(17)
+    @Order(21)
     public void findNoState() {
         assertNull(dao.findByStateCodeAndCountryCode("ST", "RT"));
     }
 
     @Test
-    @Order(18)
+    @Order(22)
     public void findNoCountry() {
-        AddressCountry empty = dao.findByCountryCode("RT");
-        assertNull(empty);
+        assertNull(dao.findByCountryCode("RT"));
     }
 }
