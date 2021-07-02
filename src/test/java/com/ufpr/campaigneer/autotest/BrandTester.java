@@ -7,12 +7,14 @@ import com.ufpr.campaigneer.model.*;
 import org.junit.jupiter.api.*;
 import org.springframework.test.context.jdbc.Sql;
 
+import javax.persistence.PersistenceException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -59,13 +61,143 @@ public class BrandTester {
     @Order(3)
     public void createBrand() throws SQLException {
         Address main = new Address();
-        main = addressDAO.findByPostalCodeAndNumber("88008-888", 1225);
+        main = addressDAO.findByPostalCodeAndNumber("88088-888", 1225);
         assertTrue(main.getId() > 0);
-        List<Address> brandAddresses = new ArrayList<>();
+        Set<Address> brandAddresses = new HashSet<>();
         brandAddresses.add(main);
         Brand brand = new Brand();
         brand.setName("UFPR");
-        Brand created = (Brand) dao.createBrand(brand);
+        brand.setAddress(brandAddresses);
+        Brand created = (Brand) dao.create(brand);
         assertTrue(created.getId() > 0);
+    }
+
+    @Test
+    @Order(4)
+    public void createAnotherBrand() throws SQLException {
+        Address main = new Address();
+        main = addressDAO.findByPostalCodeAndNumber("88088-888", 1225);
+        assertTrue(main.getId() > 0);
+        Set<Address> brandAddresses = new HashSet<>();
+        brandAddresses.add(main);
+        Brand brand = new Brand();
+        brand.setName("UFPR - SEPT");
+        brand.setAddress(brandAddresses);
+        Brand created = (Brand) dao.create(brand);
+        assertTrue(created.getId() > 0);
+    }
+
+    @Test
+    @Order(5)
+    public void updateBrand() throws SQLException {
+        Brand original = dao.findByNameAndCountry("UFPR", "BR");
+        assertTrue(original.getId() > 0);
+
+        Brand pirate = new Brand();
+        pirate.setId(original.getId());
+        pirate.setCreated(original.getCreated());
+        pirate.setName("Universidade Federal PR");
+        pirate.setAddress(original.getAddresses());
+
+        Brand current = dao.update(pirate);
+        assertNotEquals(original, current);
+        assertNotNull(current.getUpdated());
+    }
+
+    @Test
+    @Order(6)
+    public void breakAddressForeignKey() throws SQLException {
+        Brand original = dao.findByNameAndCountry("Universidade Federal PR", "BR");
+        assertTrue(original.getId() > 0);
+
+        assertThrows(PersistenceException.class, () -> {
+            dao.remove(original);
+        });
+    }
+
+    @Test
+    @Order(7)
+    public void deleteBrand() throws SQLException {
+        Brand original = dao.findByNameAndCountry("Universidade Federal PR", "BR");
+        assertTrue(original.getId() > 0);
+
+        dao.delete(original);
+        assertNotNull(original.getDeleted());
+    }
+
+    @Test
+    @Order(8)
+    public void findNoBrand() throws SQLException {
+        assertNull(dao.findByNameAndCountry("Universidade Federal PR", "BR"));
+    }
+
+    @Test
+    @Order(9)
+    public void breakRemoveBrandWithAddress() throws SQLException {
+        Brand original = dao.findDeletedByNameAndCountry("Universidade Federal PR", "BR");
+        assertNotNull(original);
+
+        assertThrows(PersistenceException.class, () -> {
+            dao.remove(original);
+        });
+    }
+
+    @Test
+    @Order(10)
+    public void removeBrandAddress() throws SQLException {
+        Brand original = dao.findDeletedByNameAndCountry("Universidade Federal PR", "BR");
+        original.getAddresses().forEach(each -> {
+            original.getAddresses().remove(each);
+        });
+
+        dao.update(original);
+        Brand noAddress = dao.findDeletedByName("Universidade Federal PR");
+        assertTrue(noAddress.getAddresses().isEmpty());
+    }
+
+    @Test
+    @Order(11)
+    public void removeBrand() throws SQLException {
+        Brand toRemove = dao.findDeletedByName("Universidade Federal PR");
+        assertNotNull(toRemove);
+        assertTrue(toRemove.getAddresses().isEmpty());
+
+        dao.remove(toRemove);
+        assertNull(dao.findDeletedByName("Universidade Federal PR"));
+    }
+
+    @Test
+    @Order(12)
+    public void completelyRemoveAnotherBrand() throws SQLException {
+        Brand toRemove = dao.findByNameAndCountry("UFPR - SEPT", "BR");
+        assertNotNull(toRemove);
+        toRemove.getAddresses().forEach(each -> {
+            toRemove.getAddresses().remove(each);
+        });
+
+        dao.update(toRemove);
+        Brand noAddress = dao.findByName("UFPR - SEPT");
+        assertTrue(noAddress.getAddresses().isEmpty());
+
+        dao.delete(noAddress);
+        assertNotNull(dao.findDeletedByName("UFPR - SEPT"));
+
+        dao.remove(noAddress);
+        assertNull(dao.findDeletedByName("UFPR - SEPT"));
+    }
+
+    @Test
+    @Order(13)
+    public void setDownAddresses() throws SQLException {
+        addressHelper.deleteAddress();
+        addressHelper.removeAddress();
+        addressHelper.updateCity();
+        addressHelper.deleteCity();
+        addressHelper.removeCity();
+        addressHelper.updateState();
+        addressHelper.deleteState();
+        addressHelper.removeState();
+        addressHelper.deleteCountry();
+        addressHelper.removeCountry();
     }
 }

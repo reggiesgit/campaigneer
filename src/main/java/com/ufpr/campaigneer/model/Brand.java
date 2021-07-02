@@ -1,7 +1,6 @@
 package com.ufpr.campaigneer.model;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,18 +13,20 @@ import java.util.Set;
 @Table(name = "brand")
 public class Brand extends BasicModel {
 
-
     private String name;
-    @OneToMany
-    private Set<Address> address;
+    @ManyToMany(targetEntity = Address.class, cascade = CascadeType.ALL,
+                fetch = FetchType.EAGER)
+    @JoinTable(name="brand_address",
+            joinColumns = { @JoinColumn(name = "brand_id", foreignKey = @ForeignKey(name ="brand_fk")) },
+            inverseJoinColumns = { @JoinColumn(name = "address_id", foreignKey = @ForeignKey(name ="address_fk")) })
+    private Set<Address> addresses;
 
-    public Brand(String name, Set<Address> address) {
+    public Brand(String name, Set<Address> addresses) {
         this.name = name;
-        this.address = address;
+        this.addresses = addresses;
     }
 
     public Brand() {
-
     }
 
     public String getName() {
@@ -36,11 +37,11 @@ public class Brand extends BasicModel {
         this.name = name;
     }
 
-    public Set<Address> getAddress() {
-        return address;
+    public Set<Address> getAddresses() {
+        return addresses;
     }
 
-    public void setAddress(Set<Address> address) {
-        this.address = address;
+    public void setAddress(Set<Address> addresses) {
+        this.addresses = addresses;
     }
 }

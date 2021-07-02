@@ -28,6 +28,7 @@ public class Address extends BasicModel {
     private String complement;
     @NotNull
     @ManyToOne
+    @JoinColumn(name = "city_id", foreignKey = @ForeignKey(name ="city_fk"))
     private AddressCity city;
 
     public Address(AddressType addressType, String postalCode, String streetName, int streetNumber, String complement, AddressCity city) {

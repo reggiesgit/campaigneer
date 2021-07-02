@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -26,12 +27,13 @@ public class Campaign extends BasicModel {
     private Date validFrom;
     private Date validUntil;
     @ManyToMany
-    private List<Product> participatingProducts;
+    @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name ="product_fk"))
+    private Set<Product> participatingProducts;
 //    TODO: When traders are added to the system, participatingTraders must be enabled.
 //    @ManyToMany
 //    ManyToMany private String participatingTraders;
     @OneToMany
-    private List<AddressCountry> validLocations;
+    private Set<AddressCountry> validLocations;
     @Enumerated
     private CampaignType campaignType;
 

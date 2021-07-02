@@ -18,6 +18,7 @@ public class AddressState extends BasicModel {
     private String code;
     @NotNull
     @ManyToOne
+    @JoinColumn(name = "country_id", foreignKey = @ForeignKey(name ="country_fk"))
     private AddressCountry country;
 
     public AddressState(String name, String code, AddressCountry country) {

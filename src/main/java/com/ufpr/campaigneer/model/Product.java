@@ -21,6 +21,7 @@ public class Product extends BasicModel {
     private ClassOfGood classOfGood;
     @NotNull
     @ManyToOne
+    @JoinColumn(name = "brand_id", foreignKey = @ForeignKey(name ="brand_fk"))
     private Brand manufacturer;
 
     public Product(String name, String ean, ClassOfGood classOfGood, Brand manufacturer) {
