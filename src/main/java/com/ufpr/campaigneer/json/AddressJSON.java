@@ -3,6 +3,9 @@ package com.ufpr.campaigneer.json;
 import com.ufpr.campaigneer.enums.AddressType;
 import com.ufpr.campaigneer.model.Address;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by Regis Gaboardi (@gmail.com)
  * Provided with Love and IntelliJ IDEA for campaigneer.
@@ -40,6 +43,14 @@ public class AddressJSON {
         result.setStreetNumber(json.getStreetNumber());
         result.setComplement(json.getComplement());
         result.setCity(AddressCityJSON.map(json.getAddressCityJSON()));
+        return result;
+    }
+
+    public static Set<Address> map(Set<AddressJSON> json) {
+        Set<Address> result = new HashSet<>();
+        json.forEach(each -> {
+            result.add(AddressJSON.map(each));
+        });
         return result;
     }
 

@@ -22,7 +22,7 @@ public class BrandDAO {
 
     private Session session;
 
-    public Brand create(Brand brand) throws SQLException {
+    public Brand create(Brand brand) {
         try {
             session = HibernateUtils.initSession();
             session.beginTransaction();
@@ -53,7 +53,7 @@ public class BrandDAO {
         }
     }
 
-    public Brand findByNameAndCountry(String brandName, String countryCode) {
+    public Brand findByNameAndCountryName(String brandName, String countryCode) {
         try {
             session = HibernateUtils.initSession();
             session.beginTransaction();
@@ -111,7 +111,7 @@ public class BrandDAO {
         }
     }
 
-    public Brand findDeletedByNameAndCountry(String brandName, String countryCode) {
+    public Brand findDeletedByNameAndCountryName(String brandName, String countryCode) {
         try {
             session = HibernateUtils.initSession();
             session.beginTransaction();

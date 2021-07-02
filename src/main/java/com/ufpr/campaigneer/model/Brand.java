@@ -41,7 +41,7 @@ public class Brand extends BasicModel {
         return addresses;
     }
 
-    public void setAddress(Set<Address> addresses) {
+    public void setAddresses(Set<Address> addresses) {
         this.addresses = addresses;
     }
 }
