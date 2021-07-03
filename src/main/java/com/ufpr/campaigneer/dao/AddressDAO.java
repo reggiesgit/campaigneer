@@ -73,8 +73,8 @@ public class AddressDAO {
             session.beginTransaction();
             Query query = session
                     .createQuery("from AddressCountry country " +
-                            "where country.code = :code " +
-                            "and country.deleted is not null ");
+                                    "where country.code = :code " +
+                                        "and country.deleted is not null ");
             query.setParameter("code", code);
             query.setMaxResults(1);
             AddressCountry country = (AddressCountry) query.uniqueResult();

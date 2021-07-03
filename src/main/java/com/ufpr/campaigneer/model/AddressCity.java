@@ -15,7 +15,7 @@ public class AddressCity extends BasicModel {
 
     private String name;
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "state_id", foreignKey = @ForeignKey(name ="state_fk"))
     private AddressState state;
 

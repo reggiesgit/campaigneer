@@ -17,7 +17,7 @@ public class AddressState extends BasicModel {
     @Column(unique = true)
     private String code;
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "country_id", foreignKey = @ForeignKey(name ="country_fk"))
     private AddressCountry country;
 

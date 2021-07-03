@@ -35,13 +35,14 @@ public class BrandTester {
         addressHelper.createCountry();
         addressHelper.createState();
         addressHelper.createCity();
+        addressHelper.updateCity();
     }
 
     @Test
     @Order(2)
     public void createAddress() throws  SQLException {
         Address address = new Address();
-        AddressCity city = addressDAO.findByCityNameAndStateCode("Curitiba", "PR");
+        AddressCity city = addressDAO.findByCityNameAndStateCode("Curitiba Capital", "PR");
         assertNotNull(city.getName());
 
         address.setCity(city);
@@ -189,10 +190,8 @@ public class BrandTester {
     public void setDownAddresses() throws SQLException {
         addressHelper.deleteAddress();
         addressHelper.removeAddress();
-        addressHelper.updateCity();
         addressHelper.deleteCity();
         addressHelper.removeCity();
-        addressHelper.updateState();
         addressHelper.deleteState();
         addressHelper.removeState();
         addressHelper.deleteCountry();
