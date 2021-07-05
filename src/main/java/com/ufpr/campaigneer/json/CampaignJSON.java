@@ -1,62 +1,65 @@
-package com.ufpr.campaigneer.model;
+package com.ufpr.campaigneer.json;
 
 import com.ufpr.campaigneer.enums.CampaignType;
+import com.ufpr.campaigneer.model.AddressCountry;
+import com.ufpr.campaigneer.model.Brand;
+import com.ufpr.campaigneer.model.Campaign;
+import com.ufpr.campaigneer.model.Product;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
  * Provided with Love and IntelliJ IDEA for campaigneer.
- * 06/02/2021
+ * 05/07/2021
  */
 
-@Entity
-@Table(name = "campaign")
-public class Campaign extends BasicModel {
+public class CampaignJSON {
 
     private String name;
-    @Column(unique = true, nullable = false)
     private String code;
-    @OneToOne
-    @JoinColumn(name = "promoter_id", foreignKey = @ForeignKey(name ="promoter_fk"))
     private Brand promoter;
     private LocalDate purchaseFrom;
     private LocalDate purchaseUntil;
     private LocalDate validFrom;
     private LocalDate validUntil;
-    @ManyToMany(targetEntity = Product.class, cascade = CascadeType.ALL,
-                fetch = FetchType.EAGER)
-    @JoinTable(name = "campaign_participating_products",
-            joinColumns = { @JoinColumn(name = "campaign_id", foreignKey = @ForeignKey(name ="product_campaign_fk"))},
-            inverseJoinColumns = { @JoinColumn(name = "participating_products_id", foreignKey = @ForeignKey(name ="campaign_product_fk")) })
     private Set<Product> participatingProducts;
-//    TODO: When traders are added to the system, participatingTraders must be enabled.
-//    @ManyToMany
-//    ManyToMany private String participatingTraders;
-    @OneToMany(targetEntity = AddressCountry.class,
-            fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "campaign_valid_locations",
-            joinColumns = {@JoinColumn(name = "campaign_id", foreignKey = @ForeignKey(name = "valid_location_fk"))},
-            inverseJoinColumns = {@JoinColumn(name = "valid_locations_id", foreignKey = @ForeignKey(name = "campaign_locations_fk"))})
+    //    TODO: When traders are added to the system, participatingTraders must be enabled.
+    private String participatingTraders;
     private Set<AddressCountry> validLocations;
-    @Enumerated(EnumType.ORDINAL)
     private CampaignType campaignType;
 
-    public Campaign(String name, Brand promoter, LocalDate purchaseFrom, LocalDate purchaseUntil, LocalDate validFrom, LocalDate validUntil, Set<Product> participatingProducts, Set<AddressCountry> validLocations, CampaignType campaignType) {
+    public CampaignJSON(String name, String code, Brand promoter, LocalDate purchaseFrom, LocalDate purchaseUntil, LocalDate validFrom, LocalDate validUntil, Set<Product> participatingProducts, String participatingTraders, Set<AddressCountry> validLocations, CampaignType campaignType) {
         this.name = name;
+        this.code = code;
         this.promoter = promoter;
         this.purchaseFrom = purchaseFrom;
         this.purchaseUntil = purchaseUntil;
         this.validFrom = validFrom;
         this.validUntil = validUntil;
         this.participatingProducts = participatingProducts;
+        this.participatingTraders = participatingTraders;
         this.validLocations = validLocations;
         this.campaignType = campaignType;
     }
 
-    public Campaign() {
+    public CampaignJSON() {
+    }
+
+    public static Campaign map(CampaignJSON json) {
+        Campaign result = new Campaign();
+        result.setName(json.getName());
+        result.setCode(json.getCode());
+        result.setValidLocations(json.getValidLocations());
+        result.setCampaignType(json.getCampaignType());
+        result.setPromoter(json.getPromoter());
+        result.setParticipatingProducts(json.getParticipatingProducts());
+        result.setValidFrom(json.getValidFrom());
+        result.setValidUntil(json.getValidUntil());
+        result.setPurchaseFrom(json.getPurchaseFrom());
+        result.setPurchaseUntil(json.getPurchaseUntil());
+        return result;
     }
 
     public String getName() {
@@ -123,6 +126,14 @@ public class Campaign extends BasicModel {
         this.participatingProducts = participatingProducts;
     }
 
+    public String getParticipatingTraders() {
+        return participatingTraders;
+    }
+
+    public void setParticipatingTraders(String participatingTraders) {
+        this.participatingTraders = participatingTraders;
+    }
+
     public Set<AddressCountry> getValidLocations() {
         return validLocations;
     }
@@ -137,24 +148,5 @@ public class Campaign extends BasicModel {
 
     public void setCampaignType(CampaignType campaignType) {
         this.campaignType = campaignType;
-    }
-
-    public static Campaign copy(Campaign original) {
-        Campaign copy = new Campaign();
-        copy.setId(original.getId());
-        copy.setName(original.getName());
-        copy.setCode(original.getCode());
-        copy.setValidLocations(original.getValidLocations());
-        copy.setCampaignType(original.getCampaignType());
-        copy.setPromoter(original.getPromoter());
-        copy.setParticipatingProducts(original.getParticipatingProducts());
-        copy.setValidFrom(original.getValidFrom());
-        copy.setValidUntil(original.getValidUntil());
-        copy.setPurchaseFrom(original.getPurchaseFrom());
-        copy.setPurchaseUntil(original.getPurchaseUntil());
-        copy.setCreated(original.getCreated());
-        copy.setUpdated(original.getUpdated());
-        copy.setDeleted(original.getDeleted());
-        return copy;
     }
 }

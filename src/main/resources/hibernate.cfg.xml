@@ -26,5 +26,6 @@
         <mapping class="com.ufpr.campaigneer.model.AddressCity"/>
         <mapping class="com.ufpr.campaigneer.model.Brand"/>
         <mapping class="com.ufpr.campaigneer.model.Product"/>
+        <mapping class="com.ufpr.campaigneer.model.Campaign"/>
     </session-factory>
 </hibernate-configuration>

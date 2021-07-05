@@ -65,6 +65,24 @@ public class ProductTester {
 
     @Test
     @Order(4)
+    public void createAnotherProduct() {
+        Product product = new Product();
+        product.setName("TACS");
+        product.setEan("UFPRSEPTTACS");
+        product.setClassOfGood(ClassOfGood.LAPTOP);
+        product.setManufacturer(brandDAO.findByName("Universidade Federal PR"));
+        assertTrue(dao.create(product).getId() > 0);
+    }
+
+    @Test
+    @Order(4)
+    public void findByEAN() {
+        Product toRemove = dao.findByEAN("TADSSEPTUFPR");
+        assertNotNull(toRemove);
+    }
+
+    @Test
+    @Order(5)
     public void deleteProduct() {
         Product toRemove = dao.findByEAN("TADSSEPTUFPR");
         assertNotNull(toRemove);
@@ -74,7 +92,17 @@ public class ProductTester {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
+    public void deleteAnotherProduct() {
+        Product toRemove = dao.findByEAN("UFPRSEPTTACS");
+        assertNotNull(toRemove);
+
+        dao.delete(toRemove);
+        assertNotNull(dao.findDeletedByEAN("UFPRSEPTTACS"));
+    }
+
+    @Test
+    @Order(7)
     public void removeProduct() {
         Product toRemove = dao.findDeletedByEAN("TADSSEPTUFPR");
         assertNotNull(toRemove);
@@ -84,7 +112,17 @@ public class ProductTester {
     }
 
     @Test
-    @Order(6)
+    @Order(8)
+    public void removeAnotherProduct() {
+        Product toRemove = dao.findDeletedByEAN("UFPRSEPTTACS");
+        assertNotNull(toRemove);
+
+        dao.remove(toRemove);
+        assertNull(dao.findDeletedByEAN("UFPRSEPTTACS"));
+    }
+
+    @Test
+    @Order(9)
     public void setDownBrand() throws SQLException {
         brandHelper.deleteBrand();
         brandHelper.removeBrandAddress();

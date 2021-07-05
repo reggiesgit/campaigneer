@@ -20,8 +20,8 @@ public class Product extends BasicModel {
     @Enumerated
     private ClassOfGood classOfGood;
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "brand_id", foreignKey = @ForeignKey(name ="brand_fk"))
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "manufacturer_id", foreignKey = @ForeignKey(name ="manufacturer_fk"))
     private Brand manufacturer;
 
     public Product(String name, String ean, ClassOfGood classOfGood, Brand manufacturer) {

@@ -8,13 +8,14 @@ package com.ufpr.campaigneer.enums;
 
 public enum AddressType {
 
-    BILLING_ADDRESS(1, "BILLING_ADDRESS"),
-    SHIPPING_ADDRESS(2, "SHIPPING_ADDRESS"),
+    BILLING_ADDRESS(0, "BILLING_ADDRESS"),
+    SHIPPING_ADDRESS(1, "SHIPPING_ADDRESS"),
+    ONLY_ADDRESS(2, "ONLY_ADDRESS"),
     BRAND_MAIN(3, "BRAND_MAIN"),
     BRAND_BRANCH(4, "BRAND_BRANCH"),
     BRAND_STORE(5, "BRAND_STORE"),
     TRADER_MAIN(6, "TRADER_MAIN"),
-    TRADER_STORE(7, "TRADER_MAIN");
+    TRADER_STORE(7, "TRADER_BRANCH");
 
     private int chave;
     private String valor;

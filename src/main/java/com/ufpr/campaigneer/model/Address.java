@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "address")
 public class Address extends BasicModel {
 
-    @Enumerated
+    @Enumerated(EnumType.ORDINAL)
     private AddressType addressType;
     @NotNull
     @ColumnDefault("00000000")

@@ -88,6 +88,15 @@ public class BrandTester {
 
     @Test
     @Order(5)
+    public void createBranch() throws SQLException {
+        addressHelper.createAnotherCountry();
+        addressHelper.createAnotherState();
+        addressHelper.createAnotherCity();
+        addressHelper.createAnotherAddress();
+    }
+
+    @Test
+    @Order(6)
     public void updateBrand() throws SQLException {
         Brand original = dao.findByNameAndCountryName("UFPR", "BR");
         assertTrue(original.getId() > 0);
@@ -104,7 +113,7 @@ public class BrandTester {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     public void breakAddressForeignKey() throws SQLException {
         Brand original = dao.findByNameAndCountryName("Universidade Federal PR", "BR");
         assertTrue(original.getId() > 0);
@@ -115,7 +124,7 @@ public class BrandTester {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     public void deleteBrand() throws SQLException {
         Brand original = dao.findByNameAndCountryName("Universidade Federal PR", "BR");
         assertTrue(original.getId() > 0);
@@ -125,13 +134,13 @@ public class BrandTester {
     }
 
     @Test
-    @Order(8)
+    @Order(9)
     public void findNoBrand() throws SQLException {
         assertNull(dao.findByNameAndCountryName("Universidade Federal PR", "BR"));
     }
 
     @Test
-    @Order(9)
+    @Order(10)
     public void breakRemoveBrandWithAddress() throws SQLException {
         Brand original = dao.findDeletedByNameAndCountryName("Universidade Federal PR", "BR");
         assertNotNull(original);
@@ -142,7 +151,18 @@ public class BrandTester {
     }
 
     @Test
-    @Order(10)
+    @Order(11)
+    public void addAnotherBrandAddress() {
+        Brand original = dao.findDeletedByNameAndCountryName("Universidade Federal PR", "BR");
+        Address another = addressDAO.findByPostalCodeAndNumber("88088-999", 819);
+        original.getAddresses().add(another);
+
+        Brand current = dao.update(original);
+        assertTrue(current.getAddresses().size() > 1);
+    }
+
+    @Test
+    @Order(12)
     public void removeBrandAddress() throws SQLException {
         Brand original = dao.findDeletedByNameAndCountryName("Universidade Federal PR", "BR");
         original.getAddresses().forEach(each -> {
@@ -155,7 +175,7 @@ public class BrandTester {
     }
 
     @Test
-    @Order(11)
+    @Order(13)
     public void removeBrand() throws SQLException {
         Brand toRemove = dao.findDeletedByName("Universidade Federal PR");
         assertNotNull(toRemove);
@@ -166,7 +186,7 @@ public class BrandTester {
     }
 
     @Test
-    @Order(12)
+    @Order(14)
     public void completelyRemoveAnotherBrand() throws SQLException {
         Brand toRemove = dao.findByNameAndCountryName("UFPR - SEPT", "BR");
         assertNotNull(toRemove);
@@ -186,7 +206,7 @@ public class BrandTester {
     }
 
     @Test
-    @Order(13)
+    @Order(15)
     public void setDownAddresses() throws SQLException {
         addressHelper.deleteAddress();
         addressHelper.removeAddress();

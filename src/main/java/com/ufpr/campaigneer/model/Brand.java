@@ -1,5 +1,7 @@
 package com.ufpr.campaigneer.model;
 
+import com.ufpr.campaigneer.enums.AddressType;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -44,4 +46,12 @@ public class Brand extends BasicModel {
     public void setAddresses(Set<Address> addresses) {
         this.addresses = addresses;
     }
+
+    public Address findMainAddress() {
+        return this.getAddresses().stream()
+                .filter(each -> each.getAddressType().equals(AddressType.BRAND_MAIN))
+                .findAny()
+                .orElse(null);
+    }
+
 }

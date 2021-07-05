@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AddressTester {
 
-    private AddressDAO dao = new AddressDAO();
+    private final AddressDAO dao = new AddressDAO();
 
     @Test
     @Order(1)
     public void createCountry() throws SQLException {
         AddressCountry country = new AddressCountry("Brasil", "BR");
-        AddressCountry created = (AddressCountry) dao.createCountry(country);
+        AddressCountry created = dao.createCountry(country);
         assertTrue(created.getId() > 0);
     }
 
@@ -39,7 +39,7 @@ public class AddressTester {
     public void createState() throws SQLException {
         AddressCountry country = dao.findByCountryCode("BR");
         AddressState state = new AddressState("Parana", "PR", country);
-        AddressState created = (AddressState) dao.createState(state);
+        AddressState created = dao.createState(state);
         assertTrue(created.getId() > 0);
     }
 
@@ -50,12 +50,40 @@ public class AddressTester {
         assertTrue(state.getId() > 0);
 
         AddressCity city = new AddressCity("Curitiba", state);
-        AddressCity created = (AddressCity) dao.createCity(city);
+        AddressCity created = dao.createCity(city);
         assertTrue(created.getId() > 0);
     }
 
     @Test
     @Order(4)
+    public void createAnotherCountry() throws SQLException {
+        AddressCountry country = new AddressCountry("Argentina", "AR");
+        AddressCountry created = dao.createCountry(country);
+        assertTrue(created.getId() > 0);
+    }
+
+    @Test
+    @Order(5)
+    public void createAnotherState() throws SQLException {
+        AddressCountry country = dao.findByCountryCode("AR");
+        AddressState state = new AddressState("Ayacucho", "AY", country);
+        AddressState created = dao.createState(state);
+        assertTrue(created.getId() > 0);
+    }
+
+    @Test
+    @Order(6)
+    public void createAnotherCity() throws SQLException {
+        AddressState state = dao.findByStateCodeAndCountryCode("AY", "AR");
+        assertTrue(state.getId() > 0);
+
+        AddressCity city = new AddressCity("Buenos Aires", state);
+        AddressCity created = dao.createCity(city);
+        assertTrue(created.getId() > 0);
+    }
+
+    @Test
+    @Order(7)
     public void breakCountryForeignKeyConstraint() {
         AddressCountry bound = dao.findByCountryCode("BR");
         assertThrows(PersistenceException.class, () -> {
@@ -64,7 +92,7 @@ public class AddressTester {
     }
 
     @Test
-    @Order(5)
+    @Order(8)
     public void breakCountryUniqueCodeConstraint() {
         AddressCountry country = new AddressCountry("Brasil", "BR");
         assertThrows(ConstraintViolationException.class, () -> {
@@ -73,7 +101,7 @@ public class AddressTester {
     }
 
     @Test
-    @Order(6)
+    @Order(9)
     public void breakStateForeignKeyConstraint() {
         AddressState bound = dao.findByStateCodeAndCountryCode("PR", "BR");
         assertThrows(PersistenceException.class, () -> {
@@ -82,7 +110,7 @@ public class AddressTester {
     }
 
     @Test
-    @Order(7)
+    @Order(10)
     public void updateCountry() {
         AddressCountry original = dao.findByCountryCode("BR");
         assertNotNull(original.getName());
@@ -101,7 +129,7 @@ public class AddressTester {
     }
 
     @Test
-    @Order(8)
+    @Order(11)
     public void updateState() {
         AddressState original = dao.findByStateCodeAndCountryCode("PR", "BR");
         assertNotNull(original.getName());
@@ -119,7 +147,7 @@ public class AddressTester {
     }
 
     @Test
-    @Order(9)
+    @Order(12)
     public void updateCity() {
         AddressCity original = dao.findByCityNameAndStateCode("Curitiba", "PR");
         assertNotNull(original.getName());
@@ -136,7 +164,7 @@ public class AddressTester {
     }
 
     @Test
-    @Order(10)
+    @Order(13)
     public void createAddress() {
         Address address = new Address();
         AddressCity city = dao.findByCityNameAndStateCode("Curitiba Capital", "PR");
@@ -149,19 +177,37 @@ public class AddressTester {
         address.setStreetNumber(1225);
         address.setPostalCode("88088-888");
 
-        Address created = (Address) dao.createAddress(address);
+        Address created = dao.createAddress(address);
         assertTrue(created.getId() > 0);
     }
 
     @Test
-    @Order(11)
+    @Order(14)
+    public void createAnotherAddress() {
+        Address address = new Address();
+        AddressCity city = dao.findByCityNameAndStateCode("Buenos Aires", "AY");
+        assertNotNull(city.getName());
+
+        address.setCity(city);
+        address.setAddressType(AddressType.BRAND_BRANCH);
+        address.setComplement("UBA");
+        address.setStreetName("Arenales");
+        address.setStreetNumber(819);
+        address.setPostalCode("88088-999");
+
+        Address created = dao.createAddress(address);
+        assertTrue(created.getId() > 0);
+    }
+
+    @Test
+    @Order(15)
     public void findAddress() {
         Address address = dao.findByPostalCodeAndNumber("88088-888", 1225);
         assertNotNull(address.getComplement());
     }
 
     @Test
-    @Order(12)
+    @Order(16)
     public void deleteAddress() {
         Address toRemove = dao.findByPostalCodeAndNumber("88088-888", 1225);
         assertNotNull(toRemove);
@@ -173,7 +219,7 @@ public class AddressTester {
     }
 
     @Test
-    @Order(13)
+    @Order(17)
     public void deleteCity() {
         AddressCity toRemove = dao.findByCityNameAndStateCode("Curitiba Capital", "PR");
         assertNotNull(toRemove);
@@ -185,7 +231,7 @@ public class AddressTester {
     }
 
     @Test
-    @Order(14)
+    @Order(18)
     public void deleteState() {
         AddressState toRemove = dao.findByStateCodeAndCountryCode("PR", "BR");
         assertNotNull(toRemove);
@@ -197,7 +243,7 @@ public class AddressTester {
     }
 
     @Test
-    @Order(15)
+    @Order(19)
     public void deleteCountry() {
         AddressCountry toRemove = dao.findByCountryCode("BR");
         assertNotNull(toRemove);
@@ -208,60 +254,84 @@ public class AddressTester {
         assertNotNull(deleted.getDeleted());
     }
 
-   @Test
-   @Order(16)
-   public void removeAddress() {
-       Address toRemove = dao.findByDeletedPostalCodeAndNumber("88088-888", 1225);
-       assertNotNull(toRemove);
-
-       dao.removeAddress(toRemove);
-       assertNull(dao.findByDeletedPostalCodeAndNumber("88088-888", 1225));
-   }
-
-   @Test
-   @Order(17)
-   public void removeCity() {
-       AddressCity toRemove = dao.findByDeletedCityNameAndStateCode("Curitiba Capital", "PR");
-       assertNotNull(toRemove);
-
-       dao.removeCity(toRemove);
-       assertNull(dao.findByDeletedCityNameAndStateCode("Curitiba Capital", "PR"));
-   }
-
-   @Test
-   @Order(18)
-   public void removeState() {
-       AddressState toRemove = dao.findByDeletedStateCodeAndCountryCode("PR", "BR");
-       assertNotNull(toRemove);
-
-       dao.removeState(toRemove);
-       assertNull(dao.findByDeletedStateCodeAndCountryCode("PR", "BR"));
-   }
-
-   @Test
-   @Order(19)
-   public void removeCountry() {
-       AddressCountry toRemove = dao.findByDeletedCountryCode("BR");
-       assertNotNull(toRemove);
-
-       dao.removeCountry(toRemove);
-       assertNull(dao.findByDeletedCountryCode("BR"));
-   }
-
     @Test
     @Order(20)
+    public void removeAddress() {
+        Address toRemove = dao.findByDeletedPostalCodeAndNumber("88088-888", 1225);
+        assertNotNull(toRemove);
+
+        dao.removeAddress(toRemove);
+        assertNull(dao.findByDeletedPostalCodeAndNumber("88088-888", 1225));
+    }
+
+    @Test
+    @Order(21)
+    public void removeCity() {
+        AddressCity toRemove = dao.findByDeletedCityNameAndStateCode("Curitiba Capital", "PR");
+        assertNotNull(toRemove);
+
+        dao.removeCity(toRemove);
+        assertNull(dao.findByDeletedCityNameAndStateCode("Curitiba Capital", "PR"));
+    }
+
+    @Test
+    @Order(22)
+    public void removeState() {
+        AddressState toRemove = dao.findByDeletedStateCodeAndCountryCode("PR", "BR");
+        assertNotNull(toRemove);
+
+        dao.removeState(toRemove);
+        assertNull(dao.findByDeletedStateCodeAndCountryCode("PR", "BR"));
+    }
+
+    @Test
+    @Order(23)
+    public void removeCountry() {
+        AddressCountry toRemove = dao.findByDeletedCountryCode("BR");
+        assertNotNull(toRemove);
+
+        dao.removeCountry(toRemove);
+        assertNull(dao.findByDeletedCountryCode("BR"));
+    }
+
+    @Test
+    @Order(24)
+    public void removeAnotherAddress() {
+        Address address = dao.findByPostalCodeAndNumber("88088-999", 819);
+        assertNotNull(address);
+        dao.removeAddress(address);
+        assertNull(dao.findByPostalCodeAndNumber("88088-999", 819));
+
+        AddressCity city = dao.findByCityNameAndStateCode("Buenos Aires", "AY");
+        assertNotNull(city);
+        dao.removeCity(city);
+        assertNull(dao.findByCityNameAndStateCode("Buenos Aires", "AY"));
+
+        AddressState state = dao.findByStateCodeAndCountryCode("AY", "AR");
+        assertNotNull(state);
+        dao.removeState(state);
+        assertNull(dao.findByStateCodeAndCountryCode("AY", "AR"));
+
+        AddressCountry country = dao.findByCountryCode("AR");
+        assertNotNull(country);
+        dao.removeCountry(country);
+        assertNull(dao.findByCountryCode("AR"));
+    }
+
+    @Test
+    @Order(25)
     public void findNoCity() {
         assertNull(dao.findByCityNameAndStateCode("Curitiba Capital", "PR"));
     }
 
     @Test
-    @Order(21)
+    @Order(26)
     public void findNoState() {
         assertNull(dao.findByStateCodeAndCountryCode("PR", "BR"));
     }
 
     @Test
-    @Order(22)
+    @Order(27)
     public void findNoCountry() {
         assertNull(dao.findByCountryCode("BR"));
     }
