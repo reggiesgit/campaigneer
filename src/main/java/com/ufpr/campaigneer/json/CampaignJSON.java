@@ -7,6 +7,9 @@ import com.ufpr.campaigneer.model.Campaign;
 import com.ufpr.campaigneer.model.Product;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -59,6 +62,37 @@ public class CampaignJSON {
         result.setValidUntil(json.getValidUntil());
         result.setPurchaseFrom(json.getPurchaseFrom());
         result.setPurchaseUntil(json.getPurchaseUntil());
+        return result;
+    }
+
+    public static Set<Campaign> map(List<CampaignJSON> jsonSet) {
+        Set<Campaign> result = new HashSet<>();
+        jsonSet.forEach(each -> {
+            result.add(map(each));
+        });
+        return result;
+    }
+
+    public static CampaignJSON map(Campaign campaign) {
+        CampaignJSON result = new CampaignJSON();
+        result.setName(campaign.getName());
+        result.setCode(campaign.getCode());
+        result.setValidLocations(campaign.getValidLocations());
+        result.setCampaignType(campaign.getCampaignType());
+        result.setPromoter(campaign.getPromoter());
+        result.setParticipatingProducts(campaign.getParticipatingProducts());
+        result.setValidFrom(campaign.getValidFrom());
+        result.setValidUntil(campaign.getValidUntil());
+        result.setPurchaseFrom(campaign.getPurchaseFrom());
+        result.setPurchaseUntil(campaign.getPurchaseUntil());
+        return result;
+    }
+
+    public static List<CampaignJSON> map(Set<Campaign> campaignSet) {
+        List<CampaignJSON> result = new ArrayList<>();
+        campaignSet.forEach(each -> {
+            result.add(map(each));
+        });
         return result;
     }
 

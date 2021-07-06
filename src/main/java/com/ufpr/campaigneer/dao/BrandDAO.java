@@ -40,9 +40,9 @@ public class BrandDAO {
             session = HibernateUtils.initSession();
             session.beginTransaction();
             Query query = session
-                .createQuery("from Brand brand " +
-                                "where brand.name = :brandName " +
-                                    "and brand.deleted is null");
+                    .createQuery("from Brand brand " +
+                            "where brand.name = :brandName " +
+                            "and brand.deleted is null");
             query.setParameter("brandName", brandName);
             query.setMaxResults(1);
             Brand brand = (Brand) query.uniqueResult();
@@ -58,11 +58,11 @@ public class BrandDAO {
             session = HibernateUtils.initSession();
             session.beginTransaction();
             Query query = session
-                .createQuery("from Brand brand " +
-                                "join fetch brand.addresses as a " +
-                                    "where brand.name = :brandName " +
-                                    "and a.city.state.country.code = :countryCode " +
-                                    "and brand.deleted is null");
+                    .createQuery("from Brand brand " +
+                            "join fetch brand.addresses as a " +
+                            "where brand.name = :brandName " +
+                            "and a.city.state.country.code = :countryCode " +
+                            "and brand.deleted is null");
             query.setParameter("brandName", brandName);
             query.setParameter("countryCode", countryCode);
             query.setMaxResults(1);
@@ -117,10 +117,10 @@ public class BrandDAO {
             session.beginTransaction();
             Query query = session
                     .createQuery("from Brand brand " +
-                                    "join fetch brand.addresses as a " +
-                                        "where brand.name = :brandName " +
-                                        "and a.city.state.country.code = :countryCode " +
-                                        "and brand.deleted is not null");
+                            "join fetch brand.addresses as a " +
+                            "where brand.name = :brandName " +
+                            "and a.city.state.country.code = :countryCode " +
+                            "and brand.deleted is not null");
             query.setParameter("brandName", brandName);
             query.setParameter("countryCode", countryCode);
             query.setMaxResults(1);
@@ -137,9 +137,9 @@ public class BrandDAO {
             session = HibernateUtils.initSession();
             session.beginTransaction();
             Query query = session
-                .createQuery("from Brand brand " +
-                                    "where brand.name = :brandName " +
-                                    "and brand.deleted is not null");
+                    .createQuery("from Brand brand " +
+                            "where brand.name = :brandName " +
+                            "and brand.deleted is not null");
             query.setParameter("brandName", brandName);
             query.setMaxResults(1);
             Brand brand = (Brand) query.uniqueResult();

@@ -9,6 +9,8 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -39,6 +41,14 @@ public class ProductJSON {
         result.setManufacturer(json.getManufacturer());
         result.setClassOfGood(json.getClassOfGood());
         result.setEan(json.getEan());
+        return result;
+    }
+
+    public static Set<Product> map(Set<ProductJSON> jsonSet) {
+        Set<Product> result = new HashSet<>();
+        jsonSet.forEach(each -> {
+            result.add(map(each));
+        });
         return result;
     }
 

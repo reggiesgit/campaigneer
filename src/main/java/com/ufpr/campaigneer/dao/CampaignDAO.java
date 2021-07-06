@@ -8,6 +8,7 @@ import org.hibernate.query.Query;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -98,6 +99,53 @@ public class CampaignDAO {
             session = HibernateUtils.initSession();
             session.beginTransaction();
             session.delete(campaign);
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
+    }
+
+    public Campaign findById(int id) {
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            return session.load(Campaign.class, id);
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
+    }
+
+
+    public Set<Campaign> findByBrand(int id) {
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            Query query = session
+                    .createQuery("from Campaign campaign " +
+                            "where campaign.promoter = :id " +
+                            "and campaign.deleted is not null");
+            query.setParameter("id", id);
+            Set<Campaign> campaignSet = (Set<Campaign>) query.getResultList();
+            return campaignSet;
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
+    }
+
+    public Set<Campaign> findByEan(String ean) {
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            Query query = session
+                    .createQuery("from Campaign campaign " +
+                            "join fetch campaign.participatingProducts as product " +
+                            "where product.ean = :ean " +
+                            "and campaign.deleted is not null");
+            query.setParameter("ean", ean);
+            Set<Campaign> campaignSet = (Set<Campaign>) query.getResultList();
+            return campaignSet;
         } finally {
             session.getTransaction().commit();
             session.close();
