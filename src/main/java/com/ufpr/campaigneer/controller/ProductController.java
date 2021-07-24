@@ -29,7 +29,7 @@ public class ProductController {
     @Qualifier("productComponent")
     private ProductService service;
 
-    @PostMapping("/create")
+    @PostMapping("/")
     public void create(@RequestBody ProductJSON json) throws SQLException {
         try {
             logger.debug("Received request to create Product with name: " + json.getName());
@@ -41,7 +41,7 @@ public class ProductController {
         }
     }
 
-    @PutMapping("/update")
+    @PutMapping("/")
     public void update(@RequestBody ProductJSON json) throws SQLException {
         try {
             logger.debug("Received request to update Product with name: " + json.getName());
@@ -53,7 +53,7 @@ public class ProductController {
         }
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/")
     public void delete(@RequestBody ProductJSON json) throws SQLException {
         try {
             logger.debug("Received request to delete Product with name: " + json.getName());

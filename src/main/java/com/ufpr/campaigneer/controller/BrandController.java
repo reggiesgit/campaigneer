@@ -27,7 +27,7 @@ public class BrandController {
     @Qualifier("brandComponent")
     private BrandService service;
 
-    @PostMapping("/createCountry")
+    @PostMapping("/")
     public void createBrand(@RequestBody BrandJSON json) throws SQLException {
         try {
             logger.debug("Received request to create Brand with name: " + json.getName());
