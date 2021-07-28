@@ -2,6 +2,7 @@ package com.ufpr.campaigneer.json;
 
 import com.ufpr.campaigneer.model.Brand;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -12,10 +13,12 @@ import java.util.Set;
 
 public class BrandJSON {
 
+    private int id;
     private String name;
     private Set<AddressJSON> addresses;
 
-    public BrandJSON(String name, Set<AddressJSON> addresses) {
+    public BrandJSON(int id, String name, Set<AddressJSON> addresses) {
+        this.id = id;
         this.name = name;
         this.addresses = addresses;
     }
@@ -23,11 +26,44 @@ public class BrandJSON {
     public BrandJSON() {
     }
 
-    public static Brand map(BrandJSON json) {
+    public static Brand mapJson(BrandJSON json) {
         Brand result = new Brand();
+        result.setId(json.getId());
         result.setName(json.getName());
-        result.setAddresses(AddressJSON.map(json.getAddresses()));
+        result.setAddresses(AddressJSON.mapJson(json.getAddresses()));
         return result;
+    }
+
+    public static BrandJSON map(Brand brand) {
+        BrandJSON result = new BrandJSON();
+        result.setId(brand.getId());
+        result.setName(brand.getName());
+        result.setAddresses(AddressJSON.map(brand.getAddresses()));
+        return result;
+    }
+
+    public static Set<BrandJSON> map(Set<Brand> brandSet) {
+        Set<BrandJSON> result = new HashSet<>();
+        brandSet.forEach(each -> {
+            result.add(BrandJSON.map(each));
+        });
+        return result;
+    }
+
+    public static Set<Brand> mapJSon(Set<BrandJSON> jsonSet) {
+        Set<Brand> result = new HashSet<>();
+        jsonSet.forEach(each -> {
+            result.add(BrandJSON.mapJson(each));
+        });
+        return result;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

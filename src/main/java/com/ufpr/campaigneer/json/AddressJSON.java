@@ -34,7 +34,7 @@ public class AddressJSON {
     public AddressJSON() {
     }
 
-    public static Address map(AddressJSON json) {
+    public static Address mapJson(AddressJSON json) {
         Address result = new Address();
         result.setId(json.getId());
         result.setAddressType(json.getAddressType());
@@ -46,10 +46,30 @@ public class AddressJSON {
         return result;
     }
 
-    public static Set<Address> map(Set<AddressJSON> json) {
+    public static Set<Address> mapJson(Set<AddressJSON> json) {
         Set<Address> result = new HashSet<>();
         json.forEach(each -> {
-            result.add(AddressJSON.map(each));
+            result.add(AddressJSON.mapJson(each));
+        });
+        return result;
+    }
+
+    public static AddressJSON map(Address address) {
+        AddressJSON result = new AddressJSON();
+        result.setId(address.getId());
+        result.setAddressType(address.getAddressType());
+        result.setPostalCode(address.getPostalCode());
+        result.setStreetName(address.getStreetName());
+        result.setStreetNumber(address.getStreetNumber());
+        result.setComplement(address.getComplement());
+        result.setAddressCityJSON(AddressCityJSON.map(address.getCity()));
+        return result;
+    }
+
+    public static Set<AddressJSON> map(Set<Address> addressSet) {
+        Set<AddressJSON> result = new HashSet<>();
+        addressSet.forEach(each -> {
+            result.add(map(each));
         });
         return result;
     }

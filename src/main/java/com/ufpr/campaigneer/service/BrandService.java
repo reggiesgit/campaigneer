@@ -3,7 +3,7 @@ package com.ufpr.campaigneer.service;
 import com.ufpr.campaigneer.model.Brand;
 import org.jvnet.hk2.annotations.Service;
 
-import java.sql.SQLException;
+import java.util.Optional;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -14,10 +14,10 @@ import java.sql.SQLException;
 @Service
 public interface BrandService {
 
-    Brand create(Brand brand);
-    Brand update(Brand brand);
+    Optional<Brand> create(Brand brand);
+    Optional<Brand> update(Brand brand);
     void delete(Brand brand);
 
-    Brand findByName(String name);
-    Brand findByNameAndCountryName(String name, String country);
+    Optional<Brand> findByName(String name);
+    Optional<Brand> findByNameAndCountryName(String name, String country);
 }

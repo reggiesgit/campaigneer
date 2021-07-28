@@ -5,6 +5,8 @@ import com.ufpr.campaigneer.model.Campaign;
 import com.ufpr.campaigneer.service.CampaignService;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * Created by Regis Gaboardi (@gmail.com)
  * Provided with Love and IntelliJ IDEA for campaigneer.
@@ -17,13 +19,13 @@ public class CampaignComponent implements CampaignService {
     CampaignDAO dao = new CampaignDAO();
 
     @Override
-    public Campaign create(Campaign campaign) {
-        return dao.create(campaign);
+    public Optional<Campaign> create(Campaign campaign) {
+        return Optional.ofNullable(dao.create(campaign));
     }
 
     @Override
-    public Campaign update(Campaign campaign) {
-        return dao.update(campaign);
+    public Optional<Campaign> update(Campaign campaign) {
+        return Optional.ofNullable(dao.update(campaign));
     }
 
     @Override
@@ -32,7 +34,7 @@ public class CampaignComponent implements CampaignService {
     }
 
     @Override
-    public Campaign findByCode(String code) {
-        return dao.findByCode(code);
+    public Optional<Campaign> findByCode(String code) {
+        return Optional.ofNullable(dao.findByCode(code));
     }
 }

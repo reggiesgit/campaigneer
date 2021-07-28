@@ -4,6 +4,7 @@ import com.ufpr.campaigneer.dao.BrandDAO;
 import com.ufpr.campaigneer.dao.ProductDAO;
 import com.ufpr.campaigneer.enums.ClassOfGood;
 import com.ufpr.campaigneer.model.Product;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
@@ -26,7 +27,7 @@ public class ProductTester {
 
     @Test
     @Order(1)
-    public void setUpBrand() throws SQLException {
+    public void setUpBrand() throws SQLException, NotFoundException {
         brandHelper.setUpAddresses();
         brandHelper.createAddress();
         brandHelper.createBrand();

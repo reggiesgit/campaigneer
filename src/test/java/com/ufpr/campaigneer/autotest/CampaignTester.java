@@ -5,6 +5,7 @@ import com.ufpr.campaigneer.dao.CampaignDAO;
 import com.ufpr.campaigneer.dao.ProductDAO;
 import com.ufpr.campaigneer.enums.CampaignType;
 import com.ufpr.campaigneer.model.*;
+import javassist.NotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.*;
 
@@ -34,7 +35,7 @@ public class CampaignTester {
 
     @Test
     @Order(1)
-    public void setUpBrand() throws SQLException {
+    public void setUpBrand() throws SQLException, NotFoundException {
         productHelper.setUpBrand();
         brandHelper.createBranch();
     }
@@ -120,7 +121,7 @@ public class CampaignTester {
 
     @Test
     @Order(7)
-    public void addCampaignLocation() {
+    public void addCampaignLocation() throws NotFoundException {
         Campaign original = dao.findByCode("2020_UFPR_ENG_SOFTWARE");
         assertNotNull(original);
         int originalSize = original.getValidLocations().size();

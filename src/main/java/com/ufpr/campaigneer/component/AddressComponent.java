@@ -8,6 +8,8 @@ import com.ufpr.campaigneer.model.AddressState;
 import com.ufpr.campaigneer.service.AddressService;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * Created by Regis Gaboardi (@gmail.com)
  * Provided with Love and IntelliJ IDEA for campaigneer.
@@ -20,13 +22,13 @@ public class AddressComponent implements AddressService {
     private AddressDAO dao = new AddressDAO();
 
     @Override
-    public AddressCountry createCountry(AddressCountry country) {
-        return dao.createCountry(country);
+    public Optional<AddressCountry> createCountry(AddressCountry country) {
+        return Optional.ofNullable(dao.createCountry(country));
     }
 
     @Override
-    public AddressCountry updateCountry(AddressCountry country) {
-        return dao.updateCountry(country);
+    public Optional<AddressCountry> updateCountry(AddressCountry country) {
+        return Optional.ofNullable(dao.updateCountry(country));
     }
 
     @Override
@@ -35,18 +37,18 @@ public class AddressComponent implements AddressService {
     }
 
     @Override
-    public AddressCountry findByCountryCode(String code) {
-        return dao.findByCountryCode(code);
+    public Optional<AddressCountry> findByCountryCode(String code) {
+        return Optional.ofNullable(dao.findByCountryCode(code));
     }
 
     @Override
-    public AddressState createState(AddressState state) {
-        return dao.createState(state);
+    public Optional<AddressState> createState(AddressState state) {
+        return Optional.ofNullable(dao.createState(state));
     }
 
     @Override
-    public AddressState updateState(AddressState state) {
-        return dao.updateState(state);
+    public Optional<AddressState> updateState(AddressState state) {
+        return Optional.ofNullable(dao.updateState(state));
     }
 
     @Override
@@ -55,18 +57,18 @@ public class AddressComponent implements AddressService {
     }
 
     @Override
-    public AddressState findByStateCodeAndCountryCode(String stateCode, String countryCode) {
-        return dao.findByStateCodeAndCountryCode(stateCode, countryCode);
+    public Optional<AddressState> findByStateCodeAndCountryCode(String stateCode, String countryCode) {
+        return Optional.ofNullable(dao.findByStateCodeAndCountryCode(stateCode, countryCode));
     }
 
     @Override
-    public AddressCity createCity(AddressCity city) {
-        return dao.createCity(city);
+    public Optional<AddressCity> createCity(AddressCity city) {
+        return Optional.ofNullable(dao.createCity(city));
     }
 
     @Override
-    public AddressCity updateCity(AddressCity city) {
-        return dao.updateCity(city);
+    public Optional<AddressCity> updateCity(AddressCity city) {
+        return Optional.ofNullable(dao.updateCity(city));
     }
 
     @Override
@@ -75,18 +77,18 @@ public class AddressComponent implements AddressService {
     }
 
     @Override
-    public AddressCity findByCityNameAndStateCode(String cityName, String stateCode) {
-        return dao.findByCityNameAndStateCode(cityName, stateCode);
+    public Optional<AddressCity> findByCityNameAndStateCode(String cityName, String stateCode) {
+        return Optional.ofNullable(dao.findByCityNameAndStateCode(cityName, stateCode));
     }
 
     @Override
-    public Address createAddress(Address address) {
-        return dao.createAddress(address);
+    public Optional<Address> createAddress(Address address) {
+        return Optional.ofNullable(dao.createAddress(address));
     }
 
     @Override
-    public Address updateAddress(Address address) {
-        return dao.updateAddress(address);
+    public Optional<Address> updateAddress(Address address) {
+        return Optional.ofNullable(dao.updateAddress(address));
     }
 
     @Override

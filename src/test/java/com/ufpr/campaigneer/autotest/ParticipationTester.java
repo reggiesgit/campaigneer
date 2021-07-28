@@ -7,4 +7,5 @@ package com.ufpr.campaigneer.autotest;
  */
 
 public class ParticipationTester {
+
 }

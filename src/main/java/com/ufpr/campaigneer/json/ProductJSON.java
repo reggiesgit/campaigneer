@@ -18,12 +18,14 @@ import javax.validation.constraints.NotNull;
 
 public class ProductJSON {
 
+    private int id;
     private String name;
     private String ean;
     private ClassOfGood classOfGood;
     private Brand manufacturer;
 
-    public ProductJSON(String name, String ean, ClassOfGood classOfGood, Brand manufacturer) {
+    public ProductJSON(int id, String name, String ean, ClassOfGood classOfGood, Brand manufacturer) {
+        this.id = id;
         this.name = name;
         this.ean = ean;
         this.classOfGood = classOfGood;
@@ -33,13 +35,32 @@ public class ProductJSON {
     public ProductJSON() {
     }
 
-    public static Product map(ProductJSON json) {
+    public static Product mapJson(ProductJSON json) {
         Product result = new Product();
+        result.setId(json.getId());
         result.setName(json.getName());
         result.setManufacturer(json.getManufacturer());
         result.setClassOfGood(json.getClassOfGood());
         result.setEan(json.getEan());
         return result;
+    }
+
+    public static ProductJSON map(Product product) {
+        ProductJSON result = new ProductJSON();
+        result.setId(product.getId());
+        result.setName(product.getName());
+        result.setManufacturer(product.getManufacturer());
+        result.setClassOfGood(product.getClassOfGood());
+        result.setEan(product.getEan());
+        return result;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

@@ -4,6 +4,7 @@ import com.ufpr.campaigneer.dao.AddressDAO;
 import com.ufpr.campaigneer.dao.BrandDAO;
 import com.ufpr.campaigneer.enums.AddressType;
 import com.ufpr.campaigneer.model.*;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.*;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -31,7 +32,7 @@ public class BrandTester {
 
     @Test
     @Order(1)
-    public void setUpAddresses() throws SQLException {
+    public void setUpAddresses() throws SQLException, NotFoundException {
         addressHelper.createCountry();
         addressHelper.createState();
         addressHelper.createCity();

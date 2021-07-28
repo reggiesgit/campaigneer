@@ -4,15 +4,18 @@ import com.ufpr.campaigneer.json.AddressCityJSON;
 import com.ufpr.campaigneer.json.AddressCountryJSON;
 import com.ufpr.campaigneer.json.AddressJSON;
 import com.ufpr.campaigneer.json.AddressStateJSON;
+import com.ufpr.campaigneer.model.Address;
 import com.ufpr.campaigneer.model.AddressCity;
 import com.ufpr.campaigneer.model.AddressCountry;
 import com.ufpr.campaigneer.model.AddressState;
 import com.ufpr.campaigneer.service.AddressService;
+import javassist.NotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
@@ -34,171 +37,140 @@ public class AddressController {
     private AddressService service;
 
     @PostMapping("/createCountry")
-    public void createCountry(@RequestBody AddressCountryJSON json) throws SQLException {
-        try {
-            logger.debug("Received request to create country with code: " + json.getCode());
-            service.createCountry(AddressCountryJSON.map(json));
-        } catch (Exception e) {
-            if (e instanceof ConstraintViolationException) {
-                throw new SQLException(e);
-            }
-        }
+    public ResponseEntity<AddressCountryJSON> createCountry(@RequestBody AddressCountryJSON json) {
+        logger.debug("Received request to create country with code: " + json.getCode());
+        AddressCountry result = service.createCountry(AddressCountryJSON.map(json)).orElse(null);
+        return ResponseEntity.ok(AddressCountryJSON.map(result));
     }
 
     @PutMapping("/updateCountry")
-    public void updateCountry(@RequestBody AddressCountryJSON json) throws SQLException {
-        try {
-            logger.debug("Received request to update country with code: " + json.getCode());
-            service.updateCountry(AddressCountryJSON.map(json));
-        } catch (Exception e) {
-            if (e instanceof ConstraintViolationException) {
-                throw new SQLException(e);
-            }
-        }
+    public ResponseEntity<AddressCountryJSON> updateCountry(@RequestBody AddressCountryJSON json) throws NotFoundException {
+        logger.debug("Received request to update country with code: " + json.getCode());
+        AddressCountry result = service.updateCountry(AddressCountryJSON.map(json))
+                .orElseThrow(() -> new NotFoundException("No country found with code: " + json.getCode()));
+        return  ResponseEntity.ok(AddressCountryJSON.map(result));
     }
 
     @DeleteMapping("/deleteCountry")
-    public void deleteCountry(@RequestBody AddressCountryJSON json) throws SQLException {
+    public ResponseEntity<Integer> deleteCountry(@RequestBody AddressCountryJSON json) throws SQLException {
+        logger.debug("Received request to delete country with code: " + json.getCode());
         try {
-            logger.debug("Received request to delete country with code: " + json.getCode());
             service.deleteCountry(AddressCountryJSON.map(json));
         } catch (Exception e) {
             if (e instanceof ConstraintViolationException) {
                 throw new SQLException(e);
             }
         }
+        return ResponseEntity.ok().body(json.getId());
     }
 
     @GetMapping("/country/{code}")
-    public AddressCountryJSON findByCountryCode(@PathVariable(value="code") String code) {
+    public ResponseEntity<AddressCountryJSON> findByCountryCode(@PathVariable(value="code") String code) throws NotFoundException {
         logger.debug("Received request to retrieve country with code: " + code);
-        AddressCountry result = null;
-        result = service.findByCountryCode(code);
-        return AddressCountryJSON.map(result);
+        AddressCountry result = service.findByCountryCode(code)
+                .orElseThrow(() -> new NotFoundException("No Country found with code: " + code));
+        return ResponseEntity.ok(AddressCountryJSON.map(result));
     }
 
     @PostMapping("/createState")
-    public void createCountry(@RequestBody AddressStateJSON json) throws SQLException {
-        try {
-            logger.debug("Received request to create state with code: " + json.getCode());
-            service.createState(AddressStateJSON.map(json));
-        } catch (Exception e) {
-            if (e instanceof ConstraintViolationException) {
-                throw new SQLException(e);
-            }
-        }
+    public ResponseEntity<AddressStateJSON> createState(@RequestBody AddressStateJSON json) {
+        logger.debug("Received request to create state with code: " + json.getCode());
+        AddressState result = service.createState(AddressStateJSON.map(json)).orElse(null);
+        return ResponseEntity.ok(AddressStateJSON.map(result));
     }
 
     @PutMapping("/updateState")
-    public void updateState(@RequestBody AddressStateJSON json) throws SQLException {
-        try {
-            logger.debug("Received request to update state with code: " + json.getCode());
-            service.updateState(AddressStateJSON.map(json));
-        } catch (Exception e) {
-            if (e instanceof ConstraintViolationException) {
-                throw new SQLException(e);
-            }
-        }
+    public ResponseEntity<AddressStateJSON> updateState(@RequestBody AddressStateJSON json) throws NotFoundException {
+        logger.debug("Received request to update state with code: " + json.getCode());
+        AddressState result = service.updateState(AddressStateJSON.map(json))
+                .orElseThrow(() -> new NotFoundException("No state found with code: " + json.getCode()));
+        return ResponseEntity.ok(AddressStateJSON.map(result));
     }
 
     @DeleteMapping("/deleteState")
-    public void deleteState(@RequestBody AddressStateJSON json) throws SQLException {
+    public ResponseEntity<Integer> deleteState(@RequestBody AddressStateJSON json) throws SQLException {
+        logger.debug("Received request to delete state with code: " + json.getCode());
         try {
-            logger.debug("Received request to delete state with code: " + json.getCode());
             service.deleteState(AddressStateJSON.map(json));
         } catch (Exception e) {
             if (e instanceof ConstraintViolationException) {
                 throw new SQLException(e);
             }
         }
+        return ResponseEntity.ok().body(json.getId());
     }
 
     @GetMapping("/state/{country}/{state}")
-    public AddressStateJSON findByStateAndCountryCode(@PathVariable(value="state") String state, @PathVariable(value="country") String country) {
+    public ResponseEntity<AddressStateJSON> findByStateAndCountryCode(@PathVariable(value="state") String state, @PathVariable(value="country") String country) throws NotFoundException {
         logger.debug("Received request to retrieve state with code: " + state + " and country: " + country);
-        AddressState result = null;
-        result = service.findByStateCodeAndCountryCode(state, country);
-        return AddressStateJSON.map(result);
+        AddressState result = service.findByStateCodeAndCountryCode(state, country)
+                .orElseThrow(() -> new NotFoundException("No state found with code: " + state + " and country: " + country));;
+        return ResponseEntity.ok(AddressStateJSON.map(result));
     }
 
     @PostMapping("/createCity")
-    public void createCity(@RequestBody AddressCityJSON json) throws SQLException {
-        try {
-            logger.debug("Received request to create city with name: " + json.getName());
-            service.createCity(AddressCityJSON.map(json));
-        } catch (Exception e) {
-            if (e instanceof ConstraintViolationException) {
-                throw new SQLException(e);
-            }
-        }
+    public ResponseEntity<AddressCityJSON> createCity(@RequestBody AddressCityJSON json) {
+        logger.debug("Received request to create city with name: " + json.getName());
+        AddressCity result = service.createCity(AddressCityJSON.map(json)).orElse(null);
+        return ResponseEntity.ok(AddressCityJSON.map(result));
     }
 
     @PutMapping("/updateCity")
-    public void updateCity(@RequestBody AddressCityJSON json) throws SQLException {
-        try {
-            logger.debug("Received request to update City with code: " + json.getName());
-            service.updateCity(AddressCityJSON.map(json));
-        } catch (Exception e) {
-            if (e instanceof ConstraintViolationException) {
-                throw new SQLException(e);
-            }
-        }
+    public ResponseEntity<AddressCityJSON> updateCity(@RequestBody AddressCityJSON json) throws NotFoundException {
+        logger.debug("Received request to update City with code: " + json.getName());
+        AddressCity result = service.updateCity(AddressCityJSON.map(json))
+                .orElseThrow(() -> new NotFoundException("No city found with code: " + json.getName()));
+        return ResponseEntity.ok(AddressCityJSON.map(result));
     }
 
     @DeleteMapping("/deleteCity")
-    public void deleteCity(@RequestBody AddressCityJSON json) throws SQLException {
+    public ResponseEntity<Integer> deleteCity(@RequestBody AddressCityJSON json) throws SQLException {
+        logger.debug("Received request to delete state with name: " + json.getName());
         try {
-            logger.debug("Received request to delete state with name: " + json.getName());
             service.deleteCity(AddressCityJSON.map(json));
         } catch (Exception e) {
             if (e instanceof ConstraintViolationException) {
                 throw new SQLException(e);
             }
         }
+        return ResponseEntity.ok(json.getId());
     }
 
     @GetMapping("/city/{state}/{city}")
-    public AddressCityJSON findByCityAndStateCode(@PathVariable(value="state") String state, @PathVariable(value="name") String city) {
+    public ResponseEntity<AddressCityJSON> findByCityAndStateCode(@PathVariable(value="state") String state, @PathVariable(value="name") String city) throws NotFoundException {
         logger.debug("Received request to retrieve city with name: " + city + " and state: " + state);
         AddressCity result = null;
-        result = service.findByCityNameAndStateCode(city, state);
-        return AddressCityJSON.map(result);
+        result = service.findByCityNameAndStateCode(city, state)
+                .orElseThrow(() -> new NotFoundException("No City found with name: " + city + " and state: " + state));
+        return ResponseEntity.ok(AddressCityJSON.map(result));
     }
 
     @PostMapping("/create")
-    public void createAddress(@RequestBody AddressJSON json) throws SQLException {
-        try {
-            logger.debug("Received request to create address with postalcode: " + json.getPostalCode());
-            service.createAddress(AddressJSON.map(json));
-        } catch (Exception e) {
-            if (e instanceof ConstraintViolationException) {
-                throw new SQLException(e);
-            }
-        }
+    public ResponseEntity<AddressJSON> createAddress(@RequestBody AddressJSON json) {
+        logger.debug("Received request to create address with postalcode: " + json.getPostalCode());
+        Address result = service.createAddress(AddressJSON.mapJson(json)).orElse(null);
+        return ResponseEntity.ok(AddressJSON.map(result));
     }
 
     @PutMapping("/update")
-    public void updateAddress(@RequestBody AddressJSON json) throws SQLException {
-        try {
-            logger.debug("Received request to update address with postalcode: " + json.getPostalCode());
-            service.updateAddress(AddressJSON.map(json));
-        } catch (Exception e) {
-            if (e instanceof ConstraintViolationException) {
-                throw new SQLException(e);
-            }
-        }
+    public ResponseEntity<AddressJSON> updateAddress(@RequestBody AddressJSON json) throws NotFoundException {
+        logger.debug("Received request to update address with postalcode: " + json.getPostalCode());
+        Address  result = service.updateAddress(AddressJSON.mapJson(json))
+                .orElseThrow(() -> new NotFoundException("No City found with address with postalcode: " + json.getPostalCode()));
+        return ResponseEntity.ok(AddressJSON.map(result));
     }
 
     @DeleteMapping("/delete")
-    public void deleteAddress(@RequestBody AddressJSON json) throws SQLException {
+    public ResponseEntity<Integer> deleteAddress(@RequestBody AddressJSON json) throws SQLException {
         try {
             logger.debug("Received request to delete address with postalcode: " + json.getPostalCode());
-            service.deleteAddress(AddressJSON.map(json));
+            service.deleteAddress(AddressJSON.mapJson(json));
         } catch (Exception e) {
             if (e instanceof ConstraintViolationException) {
                 throw new SQLException(e);
             }
         }
+        return ResponseEntity.ok(json.getId());
     }
 
 }

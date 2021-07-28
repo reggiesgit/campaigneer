@@ -1,12 +1,15 @@
 package com.ufpr.campaigneer.controller;
 
 import com.ufpr.campaigneer.json.BrandJSON;
+import com.ufpr.campaigneer.model.Brand;
 import com.ufpr.campaigneer.service.BrandService;
+import javassist.NotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
@@ -28,38 +31,30 @@ public class BrandController {
     private BrandService service;
 
     @PostMapping("/")
-    public void createBrand(@RequestBody BrandJSON json) throws SQLException {
-        try {
-            logger.debug("Received request to create Brand with name: " + json.getName());
-            service.create(BrandJSON.map(json));
-        } catch (Exception e) {
-            if (e instanceof ConstraintViolationException) {
-                throw new SQLException(e);
-            }
-        }
+    public ResponseEntity<BrandJSON> createBrand(@RequestBody BrandJSON json) throws SQLException {
+        logger.debug("Received request to create Brand with name: " + json.getName());
+        Brand result = service.create(BrandJSON.mapJson(json)).orElse(null);
+        return ResponseEntity.ok(BrandJSON.map(result));
     }
 
     @PutMapping("/update")
-    public void update(@RequestBody BrandJSON json) throws SQLException {
-        try {
-            logger.debug("Received request to update Brand with name: " + json.getName());
-            service.update(BrandJSON.map(json));
-        } catch (Exception e) {
-            if (e instanceof ConstraintViolationException) {
-                throw new SQLException(e);
-            }
-        }
+    public ResponseEntity<BrandJSON> update(@RequestBody BrandJSON json) throws SQLException, NotFoundException {
+        logger.debug("Received request to update Brand with name: " + json.getName());
+        Brand result = service.update(BrandJSON.mapJson(json))
+                .orElseThrow(() -> new NotFoundException("No Brand found with name: " + json.getName()));
+        return ResponseEntity.ok(BrandJSON.map(result));
     }
 
     @DeleteMapping("/delete")
-    public void delete(@RequestBody BrandJSON json) throws SQLException {
+    public ResponseEntity<Integer> delete(@RequestBody BrandJSON json) throws SQLException {
         try {
             logger.debug("Received request to delete Brand with name: " + json.getName());
-            service.delete(BrandJSON.map(json));
+            service.delete(BrandJSON.mapJson(json));
         } catch (Exception e) {
             if (e instanceof ConstraintViolationException) {
                 throw new SQLException(e);
             }
         }
+        return ResponseEntity.ok(json.getId());
     }
 }

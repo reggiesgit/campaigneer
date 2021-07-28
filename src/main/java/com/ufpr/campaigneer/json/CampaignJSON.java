@@ -17,6 +17,7 @@ import java.util.Set;
 
 public class CampaignJSON {
 
+    private int id;
     private String name;
     private String code;
     private Brand promoter;
@@ -30,7 +31,8 @@ public class CampaignJSON {
     private Set<AddressCountry> validLocations;
     private CampaignType campaignType;
 
-    public CampaignJSON(String name, String code, Brand promoter, LocalDate purchaseFrom, LocalDate purchaseUntil, LocalDate validFrom, LocalDate validUntil, Set<Product> participatingProducts, String participatingTraders, Set<AddressCountry> validLocations, CampaignType campaignType) {
+    public CampaignJSON(int id, String name, String code, Brand promoter, LocalDate purchaseFrom, LocalDate purchaseUntil, LocalDate validFrom, LocalDate validUntil, Set<Product> participatingProducts, String participatingTraders, Set<AddressCountry> validLocations, CampaignType campaignType) {
+        this.id = id;
         this.name = name;
         this.code = code;
         this.promoter = promoter;
@@ -47,8 +49,9 @@ public class CampaignJSON {
     public CampaignJSON() {
     }
 
-    public static Campaign map(CampaignJSON json) {
+    public static Campaign mapJson(CampaignJSON json) {
         Campaign result = new Campaign();
+        result.setId(json.getId());
         result.setName(json.getName());
         result.setCode(json.getCode());
         result.setValidLocations(json.getValidLocations());
@@ -60,6 +63,30 @@ public class CampaignJSON {
         result.setPurchaseFrom(json.getPurchaseFrom());
         result.setPurchaseUntil(json.getPurchaseUntil());
         return result;
+    }
+
+    public static CampaignJSON map(Campaign campaign) {
+        CampaignJSON result = new CampaignJSON();
+        result.setId(campaign.getId());
+        result.setName(campaign.getName());
+        result.setCode(campaign.getCode());
+        result.setValidLocations(campaign.getValidLocations());
+        result.setCampaignType(campaign.getCampaignType());
+        result.setPromoter(campaign.getPromoter());
+        result.setParticipatingProducts(campaign.getParticipatingProducts());
+        result.setValidFrom(campaign.getValidFrom());
+        result.setValidUntil(campaign.getValidUntil());
+        result.setPurchaseFrom(campaign.getPurchaseFrom());
+        result.setPurchaseUntil(campaign.getPurchaseUntil());
+        return result;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

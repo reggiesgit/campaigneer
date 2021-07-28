@@ -3,6 +3,8 @@ package com.ufpr.campaigneer.service;
 import com.ufpr.campaigneer.model.Product;
 import org.jvnet.hk2.annotations.Service;
 
+import java.util.Optional;
+
 /**
  * Created by Regis Gaboardi (@gmail.com)
  * Provided with Love and IntelliJ IDEA for campaigneer.
@@ -12,9 +14,9 @@ import org.jvnet.hk2.annotations.Service;
 @Service
 public interface ProductService {
 
-    Product create(Product product);
-    Product update(Product product);
+    Optional<Product> create(Product product);
+    Optional<Product> update(Product product);
     void delete(Product product);
 
-    Product findByEAN(String ean);
+    Optional<Product> findByEAN(String ean);
 }

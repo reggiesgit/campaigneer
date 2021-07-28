@@ -6,6 +6,7 @@ import com.ufpr.campaigneer.model.Address;
 import com.ufpr.campaigneer.model.AddressCity;
 import com.ufpr.campaigneer.model.AddressCountry;
 import com.ufpr.campaigneer.model.AddressState;
+import javassist.NotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.*;
 
@@ -36,7 +37,7 @@ public class AddressTester {
 
     @Test
     @Order(2)
-    public void createState() throws SQLException {
+    public void createState() {
         AddressCountry country = dao.findByCountryCode("BR");
         AddressState state = new AddressState("Parana", "PR", country);
         AddressState created = dao.createState(state);
@@ -84,7 +85,7 @@ public class AddressTester {
 
     @Test
     @Order(7)
-    public void breakCountryForeignKeyConstraint() {
+    public void breakCountryForeignKeyConstraint() throws NotFoundException {
         AddressCountry bound = dao.findByCountryCode("BR");
         assertThrows(PersistenceException.class, () -> {
             dao.removeCountry(bound);
@@ -111,7 +112,7 @@ public class AddressTester {
 
     @Test
     @Order(10)
-    public void updateCountry() {
+    public void updateCountry() throws NotFoundException {
         AddressCountry original = dao.findByCountryCode("BR");
         assertNotNull(original.getName());
 

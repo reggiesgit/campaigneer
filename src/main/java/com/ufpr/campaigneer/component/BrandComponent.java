@@ -5,6 +5,8 @@ import com.ufpr.campaigneer.model.Brand;
 import com.ufpr.campaigneer.service.BrandService;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * Created by Regis Gaboardi (@gmail.com)
  * Provided with Love and IntelliJ IDEA for campaigneer.
@@ -17,13 +19,13 @@ public class BrandComponent implements BrandService {
     BrandDAO dao = new BrandDAO();
 
     @Override
-    public Brand create(Brand brand) {
-        return dao.create(brand);
+    public Optional<Brand> create(Brand brand) {
+        return Optional.ofNullable(dao.create(brand));
     }
 
     @Override
-    public Brand update(Brand brand) {
-        return dao.update(brand);
+    public Optional<Brand> update(Brand brand) {
+        return Optional.ofNullable(dao.update(brand));
     }
 
     @Override
@@ -32,12 +34,12 @@ public class BrandComponent implements BrandService {
     }
 
     @Override
-    public Brand findByName(String name) {
-        return dao.findByName(name);
+    public Optional<Brand> findByName(String name) {
+        return Optional.ofNullable(dao.findByName(name));
     }
 
     @Override
-    public Brand findByNameAndCountryName(String name, String country) {
-        return dao.findByNameAndCountryName(name, country);
+    public Optional<Brand> findByNameAndCountryName(String name, String country) {
+        return Optional.ofNullable(dao.findByNameAndCountryName(name, country));
     }
 }

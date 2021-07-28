@@ -5,6 +5,8 @@ import com.ufpr.campaigneer.model.Product;
 import com.ufpr.campaigneer.service.ProductService;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * Created by Regis Gaboardi (@gmail.com)
  * Provided with Love and IntelliJ IDEA for campaigneer.
@@ -17,13 +19,13 @@ public class ProductComponent implements ProductService {
     ProductDAO dao = new ProductDAO();
 
     @Override
-    public Product create(Product product) {
-        return dao.create(product);
+    public Optional<Product> create(Product product) {
+        return Optional.ofNullable(dao.create(product));
     }
 
     @Override
-    public Product update(Product product) {
-        return dao.update(product);
+    public Optional<Product> update(Product product) {
+        return Optional.ofNullable(dao.update(product));
     }
 
     @Override
@@ -32,7 +34,7 @@ public class ProductComponent implements ProductService {
     }
 
     @Override
-    public Product findByEAN(String ean) {
-        return dao.findByEAN(ean);
+    public Optional<Product> findByEAN(String ean) {
+        return Optional.ofNullable(dao.findByEAN(ean));
     }
 }
