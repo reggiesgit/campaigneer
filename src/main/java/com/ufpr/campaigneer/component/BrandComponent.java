@@ -39,7 +39,7 @@ public class BrandComponent implements BrandService {
     }
 
     @Override
-    public Optional<Brand> findByNameAndCountryName(String name, String country) {
-        return Optional.ofNullable(dao.findByNameAndCountryName(name, country));
+    public Optional<Brand> findByNameAndCountryCode(String name, String country) {
+        return Optional.ofNullable(dao.findByNameAndCountryCode(name, country));
     }
 }

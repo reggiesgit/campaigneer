@@ -96,4 +96,9 @@ public class AddressComponent implements AddressService {
         dao.deleteAddress(address);
     }
 
+    @Override
+    public Optional<Address> findByPostalCodeAndNumber(String postalCode, int number) {
+        return Optional.ofNullable(dao.findByPostalCodeAndNumber(postalCode, number));
+    }
+
 }

@@ -53,7 +53,7 @@ public class BrandDAO {
         }
     }
 
-    public Brand findByNameAndCountryName(String brandName, String countryCode) {
+    public Brand findByNameAndCountryCode(String brandName, String countryCode) {
         try {
             session = HibernateUtils.initSession();
             session.beginTransaction();

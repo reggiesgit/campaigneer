@@ -19,5 +19,5 @@ public interface BrandService {
     void delete(Brand brand);
 
     Optional<Brand> findByName(String name);
-    Optional<Brand> findByNameAndCountryName(String name, String country);
+    Optional<Brand> findByNameAndCountryCode(String name, String countryCode);
 }

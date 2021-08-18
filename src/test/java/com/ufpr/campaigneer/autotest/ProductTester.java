@@ -1,8 +1,10 @@
 package com.ufpr.campaigneer.autotest;
 
+import com.ufpr.campaigneer.component.ProductComponent;
 import com.ufpr.campaigneer.dao.BrandDAO;
 import com.ufpr.campaigneer.dao.ProductDAO;
 import com.ufpr.campaigneer.enums.ClassOfGood;
+import com.ufpr.campaigneer.model.Brand;
 import com.ufpr.campaigneer.model.Product;
 import javassist.NotFoundException;
 import org.junit.jupiter.api.*;
@@ -22,33 +24,30 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ProductTester {
 
     private ProductDAO dao = new ProductDAO();
+    private ProductComponent component = new ProductComponent();
     private BrandDAO brandDAO = new BrandDAO();
     private BrandTester brandHelper = new BrandTester();
 
+    public Product defaultProduct() {
+        Product product = component.findByEAN("UFPRSEPTTADS")
+                .orElse(new Product("TADS", "UFPRSEPTTADS", ClassOfGood.LAPTOP, brandHelper.defaultBrand()));
+        if (product.getId() > 0) {
+            return product;
+        }
+        return component.create(product).orElse(null);
+    }
+
     @Test
     @Order(1)
-    public void setUpBrand() throws SQLException, NotFoundException {
-        brandHelper.setUpAddresses();
-        brandHelper.createAddress();
-        brandHelper.createBrand();
-        brandHelper.updateBrand();
+    public void createProduct() {
+        assertTrue(defaultProduct().getId() > 0);
     }
 
     @Test
     @Order(2)
-    public void createProduct() {
-        Product product = new Product();
-        product.setName("TADS");
-        product.setEan("UFPRSEPTTADS");
-        product.setClassOfGood(ClassOfGood.LAPTOP);
-        product.setManufacturer(brandDAO.findByName("Universidade Federal PR"));
-        assertTrue(dao.create(product).getId() > 0);
-    }
-
-    @Test
-    @Order(3)
     public void updateProduct() {
-        Product original = dao.findByEAN("UFPRSEPTTADS");
+        Product original = component.findByEAN("UFPRSEPTTADS").orElse(null);
+        assertNotNull(original);
         assertTrue(original.getId() > 0);
 
         Product pirate = new Product();
@@ -62,40 +61,42 @@ public class ProductTester {
         Product current = dao.update(pirate);
         assertNotEquals(original, current);
         assertNotNull(current.getUpdated());
+
+        dao.update(original);
     }
 
     @Test
-    @Order(4)
+    @Order(3)
     public void createAnotherProduct() {
         Product product = new Product();
         product.setName("TACS");
         product.setEan("UFPRSEPTTACS");
         product.setClassOfGood(ClassOfGood.LAPTOP);
-        product.setManufacturer(brandDAO.findByName("Universidade Federal PR"));
-        assertTrue(dao.create(product).getId() > 0);
+        product.setManufacturer(brandDAO.findByName("UFPR"));
+        assertTrue(component.create(product).orElse(null).getId() > 0);
     }
 
     @Test
     @Order(4)
     public void findByEAN() {
-        Product toRemove = dao.findByEAN("TADSSEPTUFPR");
+        Product toRemove = component.findByEAN("TADSSEPTUFPR").orElse(null);
         assertNotNull(toRemove);
     }
 
     @Test
     @Order(5)
     public void deleteProduct() {
-        Product toRemove = dao.findByEAN("TADSSEPTUFPR");
+        Product toRemove = component.findByEAN("TADSSEPTUFPR").orElse(null);
         assertNotNull(toRemove);
 
-        dao.delete(toRemove);
+        component.delete(toRemove);
         assertNotNull(dao.findDeletedByEAN("TADSSEPTUFPR"));
     }
 
     @Test
     @Order(6)
     public void deleteAnotherProduct() {
-        Product toRemove = dao.findByEAN("UFPRSEPTTACS");
+        Product toRemove = component.findByEAN("UFPRSEPTTACS").orElse(null);
         assertNotNull(toRemove);
 
         dao.delete(toRemove);
@@ -124,7 +125,7 @@ public class ProductTester {
 
     @Test
     @Order(9)
-    public void setDownBrand() throws SQLException {
+    public void setDownBrand() {
         brandHelper.deleteBrand();
         brandHelper.removeBrandAddress();
         brandHelper.removeBrand();

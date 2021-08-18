@@ -1,5 +1,6 @@
 package com.ufpr.campaigneer.autotest;
 
+import com.ufpr.campaigneer.component.CampaignComponent;
 import com.ufpr.campaigneer.dao.AddressDAO;
 import com.ufpr.campaigneer.dao.CampaignDAO;
 import com.ufpr.campaigneer.dao.ProductDAO;
@@ -27,35 +28,16 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CampaignTester {
 
     private CampaignDAO dao = new CampaignDAO();
+    private CampaignComponent component = new CampaignComponent();
     private ProductDAO productDAO = new ProductDAO();
     private AddressDAO addressDAO = new AddressDAO();
     private AddressTester addressHelper = new AddressTester();
     private ProductTester productHelper = new ProductTester();
     private BrandTester brandHelper = new BrandTester();
 
-    @Test
-    @Order(1)
-    public void setUpBrand() throws SQLException, NotFoundException {
-        productHelper.setUpBrand();
-        brandHelper.createBranch();
-    }
-
-    @Test
-    @Order(2)
-    public void setUpProduct() {
-        productHelper.createProduct();
-        productHelper.updateProduct();
-        productHelper.createAnotherProduct();
-    }
-
-    @Test
-    @Order(3)
-    public void createCampaign() {
-        Product product = productDAO.findByEAN("TADSSEPTUFPR");
-        assertNotNull(product.getManufacturer().getAddresses());
+    public Campaign defaultCampaign() {
+        Product product = productHelper.defaultProduct();
         Address local = product.getManufacturer().findMainAddress();
-        assertNotNull(local);
-
         Campaign campaign = new Campaign();
         campaign.setName("Engenharia de Software");
         campaign.setCode("2020_UFPR_ENG_SOFTWARE");
@@ -72,7 +54,13 @@ public class CampaignTester {
         productSet.add(product);
         campaign.setParticipatingProducts(productSet);
 
-        Campaign created = dao.create(campaign);
+        return component.create(campaign).orElse(null);
+    }
+
+    @Test
+    @Order(1)
+    public void createCampaign() {
+        Campaign created = defaultCampaign();
         assertNotNull(created);
         assertNotNull(created.getPromoter());
         assertNotNull(created.getValidLocations());
@@ -80,7 +68,7 @@ public class CampaignTester {
     }
 
     @Test
-    @Order(4)
+    @Order(2)
     public void breakCampaignCodeForeignKey() {
         Campaign repeatedCode = new Campaign();
         Campaign campaign = new Campaign();
@@ -89,45 +77,47 @@ public class CampaignTester {
         campaign.setCampaignType(CampaignType.WARRANTY);
 
         assertThrows(ConstraintViolationException.class, () -> {
-            Campaign created = dao.create(repeatedCode);
+            component.create(repeatedCode);
         });
     }
 
     @Test
     @Order(5)
     public void updateCampaign() {
-        Campaign original = dao.findByCode("2020_UFPR_ENG_SOFTWARE");
+        Campaign original = component.findByCode("2020_UFPR_ENG_SOFTWARE").orElse(null);
         assertNotNull(original);
         Campaign pirate = Campaign.copy(original);
 
         pirate.setName("Eng. Software 2020");
-        Campaign current = dao.update(pirate);
+        Campaign current = component.update(pirate).orElse(null);
         assertNotEquals(original, current);
         assertNotNull(current.getUpdated());
+
+        component.update(original);
     }
 
     @Test
     @Order(6)
     public void addCampaignProduct() {
-        Campaign original = dao.findByCode("2020_UFPR_ENG_SOFTWARE");
+        Campaign original = component.findByCode("2020_UFPR_ENG_SOFTWARE").orElse(null);
         assertNotNull(original);
         int originalSize = original.getParticipatingProducts().size();
         original.getParticipatingProducts().add(productDAO.findByEAN("UFPRSEPTTACS"));
 
-        Campaign current = dao.update(original);
+        Campaign current = component.update(original).orElse(null);
         assertTrue(current.getParticipatingProducts().size() > originalSize);
         assertNotNull(current.getUpdated());
     }
 
     @Test
     @Order(7)
-    public void addCampaignLocation() throws NotFoundException {
-        Campaign original = dao.findByCode("2020_UFPR_ENG_SOFTWARE");
+    public void addCampaignLocation() {
+        Campaign original = component.findByCode("2020_UFPR_ENG_SOFTWARE").orElse(null);
         assertNotNull(original);
         int originalSize = original.getValidLocations().size();
         original.getValidLocations().add(addressDAO.findByCountryCode("AR"));
 
-        Campaign current = dao.update(original);
+        Campaign current = component.update(original).orElse(null);
         assertTrue(current.getValidLocations().size() > originalSize);
         assertNotNull(current.getUpdated());
     }
@@ -151,11 +141,11 @@ public class CampaignTester {
     @Test
     @Order(9)
     public void deleteCampaign() {
-        Campaign original = dao.findByCode("2020_UFPR_ENG_SOFTWARE");
+        Campaign original = component.findByCode("2020_UFPR_ENG_SOFTWARE").orElse(null);
         assertNotNull(original);
 
         dao.delete(original);
-        assertNull(dao.findByCode("2020_UFPR_ENG_SOFTWARE"));
+        assertNull(component.findByCode("2020_UFPR_ENG_SOFTWARE").orElse(null));
     }
 
     @Test
@@ -179,7 +169,7 @@ public class CampaignTester {
 
     @Test
     @Order(12)
-    public void setDownBrandAndBranch() throws SQLException {
+    public void setDownBrandAndBranch() {
         brandHelper.deleteBrand();
         brandHelper.removeBrandAddress();
         addressHelper.removeAnotherAddress();
