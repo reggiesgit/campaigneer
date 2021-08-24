@@ -24,7 +24,7 @@ import java.sql.SQLException;
 @RequestMapping("/product")
 public class ProductController {
 
-    Logger logger = LoggerFactory.getLogger(AddressController.class);
+    Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     @Autowired
     @Qualifier("productComponent")
@@ -38,10 +38,10 @@ public class ProductController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<ProductJSON> update(@RequestBody ProductJSON json) throws SQLException, NotFoundException {
+    public ResponseEntity<ProductJSON> update(@RequestBody ProductJSON json) throws NotFoundException {
         logger.debug("Received request to update Product with name: " + json.getName());
         Product result = service.update(ProductJSON.mapJson(json))
-                .orElseThrow(() -> new NotFoundException("No Brand found with name: " + json.getName()));
+                .orElseThrow(() -> new NotFoundException("No Product found with ean: " + json.getEan()));
         return ResponseEntity.ok(ProductJSON.map(result));
     }
 

@@ -1,5 +1,6 @@
 package com.ufpr.campaigneer.autotest;
 
+import com.ufpr.campaigneer.component.ParticipationComponent;
 import com.ufpr.campaigneer.dao.AddressDAO;
 import com.ufpr.campaigneer.dao.ParticipationDAO;
 import com.ufpr.campaigneer.dao.ProductDAO;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -25,12 +27,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ParticipationTester {
 
-
-    private AddressTester addressHelper = new AddressTester();
     private ParticipationDAO dao = new ParticipationDAO();
     private ParticipationComponent component = new ParticipationComponent();
+    private AddressTester addressHelper = new AddressTester();
+    private ProductTester productHelper = new ProductTester();
     private AddressDAO addressDAO = new AddressDAO();
-    private ProductDAO productDAO = new ProductDAO();
 
     private Address setUpAddress() {
         addressHelper.defaultCity();
@@ -47,15 +48,12 @@ public class ParticipationTester {
 
     public Participation defaultParticipation() {
         Participation part = new Participation();
-        part.setAddresses(new HashSet<>());
-        part.setProducts(new HashSet<>());
-        Address address = setUpAddress();
+//        part.setAddresses(new HashSet<>());
+//        part.setProducts(new HashSet<>());
         part.setName("Regis");
         part.setLastName("Gaboardi");
         part.setEmail("regisandre@ufpr.br");
         part.setContact("88231331");
-//        part.getAddresses().add(address);
-//        part.getProducts().add(productDAO.findByEAN("UFPRSEPTTADS"));
         return component.create(part).orElse(null);
     }
 
@@ -65,5 +63,26 @@ public class ParticipationTester {
         assertNotNull(defaultParticipation());
     }
 
+    @Test
+    @Order(2)
+    public void updateWithAddress() {
+        Participation original = component.findByEmail(defaultParticipation().getEmail()).orElse(null);
+        original.setAddresses(new HashSet<>());
+        original.getAddresses().add(setUpAddress());
+        Participation updated = component.update(original).orElse(null);
+        assertNotNull(updated);
+        assertTrue(!updated.getAddresses().isEmpty());
+    }
+
+    @Test
+    @Order(3)
+    public void updateWithProduct() {
+        Participation original = component.findByEmail(defaultParticipation().getEmail()).orElse(null);
+        original.setProducts(new HashSet<>());
+        original.getProducts().add(productHelper.defaultProduct());
+        Participation updated = component.update(original).orElse(null);
+        assertNotNull(updated);
+        assertTrue(!updated.getProducts().isEmpty());
+    }
 
 }

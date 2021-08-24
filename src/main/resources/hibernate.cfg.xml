@@ -27,5 +27,6 @@
         <mapping class="com.ufpr.campaigneer.model.Brand"/>
         <mapping class="com.ufpr.campaigneer.model.Product"/>
         <mapping class="com.ufpr.campaigneer.model.Campaign"/>
+        <mapping class="com.ufpr.campaigneer.model.Participation"/>
     </session-factory>
 </hibernate-configuration>
