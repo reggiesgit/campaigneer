@@ -1,5 +1,6 @@
 package com.ufpr.campaigneer.dao;
 
+import com.ufpr.campaigneer.model.Brand;
 import com.ufpr.campaigneer.model.Campaign;
 import com.ufpr.campaigneer.model.Participation;
 import com.ufpr.campaigneer.utils.HibernateUtils;
@@ -23,12 +24,16 @@ public class ParticipationDAO {
             session = HibernateUtils.initSession();
             session.beginTransaction();
             participation.setCreated(new Timestamp(new Date().getTime()));
-            participation.setId((Integer) session.save(participation));
+            participation.setId((Long) session.save(participation));
             session.getTransaction().commit();
             return participation;
         } finally {
             session.close();
         }
+    }
+
+    public Participation findById(Long id) {
+        return session.load(Participation.class, id);
     }
 
     public Participation update(Participation participation) {

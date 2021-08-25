@@ -33,7 +33,7 @@ public class BrandTester {
 
     public Brand defaultBrand() {
         Brand brand = component.findByName("UFPR").orElse(new Brand());
-        if (brand.getId() > 0) {
+        if (brand.getId() != null) {
             return brand;
         }
         AddressCity city = addressHelper.defaultCity();

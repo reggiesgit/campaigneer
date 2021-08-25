@@ -27,14 +27,18 @@ public class ProductTester {
     private ProductComponent component = new ProductComponent();
     private BrandDAO brandDAO = new BrandDAO();
     private BrandTester brandHelper = new BrandTester();
+    private Long lastCreated;
 
     public Product defaultProduct() {
         Product product = component.findByEAN("UFPRSEPTTADS")
                 .orElse(new Product("TADS", "UFPRSEPTTADS", ClassOfGood.LAPTOP, brandHelper.defaultBrand()));
-        if (product.getId() > 0) {
+        if (product.getId() != null) {
+            this.lastCreated = product.getId();
             return product;
         }
-        return component.create(product).orElse(null);
+        product = component.create(product).orElse(null);
+        this.lastCreated = product.getId();
+        return product;
     }
 
     @Test
@@ -79,12 +83,18 @@ public class ProductTester {
     @Test
     @Order(4)
     public void findByEAN() {
-        Product toRemove = component.findByEAN("TADSSEPTUFPR").orElse(null);
-        assertNotNull(toRemove);
+        Product found = component.findByEAN("UFPRSEPTTADS").orElse(null);
+        assertNotNull(found);
     }
 
     @Test
     @Order(5)
+    public void findById() {
+        assertNotNull(component.findById(1L));
+    }
+
+    @Test
+    @Order(6)
     public void deleteProduct() {
         Product toRemove = component.findByEAN("TADSSEPTUFPR").orElse(null);
         assertNotNull(toRemove);
@@ -94,7 +104,7 @@ public class ProductTester {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     public void deleteAnotherProduct() {
         Product toRemove = component.findByEAN("UFPRSEPTTACS").orElse(null);
         assertNotNull(toRemove);
@@ -104,7 +114,7 @@ public class ProductTester {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     public void removeProduct() {
         Product toRemove = dao.findDeletedByEAN("TADSSEPTUFPR");
         assertNotNull(toRemove);
@@ -114,7 +124,7 @@ public class ProductTester {
     }
 
     @Test
-    @Order(8)
+    @Order(9)
     public void removeAnotherProduct() {
         Product toRemove = dao.findDeletedByEAN("UFPRSEPTTACS");
         assertNotNull(toRemove);
@@ -124,7 +134,7 @@ public class ProductTester {
     }
 
     @Test
-    @Order(9)
+    @Order(10)
     public void setDownBrand() {
         brandHelper.deleteBrand();
         brandHelper.removeBrandAddress();

@@ -18,6 +18,7 @@ public interface BrandService {
     Optional<Brand> update(Brand brand);
     void delete(Brand brand);
 
+    Optional<Brand> findById(Long id);
     Optional<Brand> findByName(String name);
     Optional<Brand> findByNameAndCountryCode(String name, String countryCode);
 }

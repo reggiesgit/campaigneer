@@ -32,29 +32,29 @@ public class ProductController {
 
     @PostMapping("/")
     public ResponseEntity<ProductJSON> create(@RequestBody ProductJSON json) throws SQLException {
-        logger.debug("Received request to create Product with name: " + json.getName());
+        logger.debug("Received request to create Product with ean: " + json.getEan());
         Product result = service.create(ProductJSON.mapJson(json)).orElse(null);
         return ResponseEntity.ok(ProductJSON.map(result));
     }
 
     @PutMapping("/")
     public ResponseEntity<ProductJSON> update(@RequestBody ProductJSON json) throws NotFoundException {
-        logger.debug("Received request to update Product with name: " + json.getName());
+        logger.debug("Received request to update Product with ean: " + json.getEan());
         Product result = service.update(ProductJSON.mapJson(json))
                 .orElseThrow(() -> new NotFoundException("No Product found with ean: " + json.getEan()));
         return ResponseEntity.ok(ProductJSON.map(result));
     }
 
-    @DeleteMapping("/")
-    public ResponseEntity<Integer> delete(@RequestBody ProductJSON json) throws SQLException {
+    @DeleteMapping("/{id}/")
+    public ResponseEntity<Long> delete(@PathVariable(value = "id") Long id) throws SQLException {
         try {
-            logger.debug("Received request to delete Product with name: " + json.getName());
-            service.delete(ProductJSON.mapJson(json));
+            logger.debug("Received request to delete Product with id: " + id);
+            service.delete(id);
         } catch (Exception e) {
             if (e instanceof ConstraintViolationException) {
                 throw new SQLException(e);
             }
         }
-        return ResponseEntity.ok(json.getId());
+        return ResponseEntity.ok(id);
     }
 }

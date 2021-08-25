@@ -18,5 +18,6 @@ public interface CampaignService {
     Optional<Campaign> update(Campaign campaign);
     void delete(Campaign campaign);
 
+    Optional<Campaign> findByid(Long id);
     Optional<Campaign> findByCode(String code);
 }

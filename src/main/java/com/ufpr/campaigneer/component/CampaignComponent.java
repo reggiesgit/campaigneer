@@ -34,6 +34,11 @@ public class CampaignComponent implements CampaignService {
     }
 
     @Override
+    public Optional<Campaign> findByid(Long id) {
+        return Optional.ofNullable(dao.findById(id));
+    }
+
+    @Override
     public Optional<Campaign> findByCode(String code) {
         return Optional.ofNullable(dao.findByCode(code));
     }

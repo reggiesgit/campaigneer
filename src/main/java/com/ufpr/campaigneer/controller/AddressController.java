@@ -52,7 +52,7 @@ public class AddressController {
     }
 
     @DeleteMapping("/deleteCountry")
-    public ResponseEntity<Integer> deleteCountry(@RequestBody AddressCountryJSON json) throws SQLException {
+    public ResponseEntity<Long> deleteCountry(@RequestBody AddressCountryJSON json) throws SQLException {
         logger.debug("Received request to delete country with code: " + json.getCode());
         try {
             service.deleteCountry(AddressCountryJSON.map(json));
@@ -88,7 +88,7 @@ public class AddressController {
     }
 
     @DeleteMapping("/deleteState")
-    public ResponseEntity<Integer> deleteState(@RequestBody AddressStateJSON json) throws SQLException {
+    public ResponseEntity<Long> deleteState(@RequestBody AddressStateJSON json) throws SQLException {
         logger.debug("Received request to delete state with code: " + json.getCode());
         try {
             service.deleteState(AddressStateJSON.map(json));
@@ -124,7 +124,7 @@ public class AddressController {
     }
 
     @DeleteMapping("/deleteCity")
-    public ResponseEntity<Integer> deleteCity(@RequestBody AddressCityJSON json) throws SQLException {
+    public ResponseEntity<Long> deleteCity(@RequestBody AddressCityJSON json) throws SQLException {
         logger.debug("Received request to delete state with name: " + json.getName());
         try {
             service.deleteCity(AddressCityJSON.map(json));
@@ -161,7 +161,7 @@ public class AddressController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Integer> deleteAddress(@RequestBody AddressJSON json) throws SQLException {
+    public ResponseEntity<Long> deleteAddress(@RequestBody AddressJSON json) throws SQLException {
         try {
             logger.debug("Received request to delete address with postalcode: " + json.getPostalCode());
             service.deleteAddress(AddressJSON.mapJson(json));

@@ -4,12 +4,6 @@ import com.ufpr.campaigneer.enums.ClassOfGood;
 import com.ufpr.campaigneer.model.Brand;
 import com.ufpr.campaigneer.model.Product;
 
-import javax.persistence.Enumerated;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
-
 /**
  * Created by Regis Gaboardi (@gmail.com)
  * Provided with Love and IntelliJ IDEA for campaigneer.
@@ -18,13 +12,13 @@ import javax.validation.constraints.NotNull;
 
 public class ProductJSON {
 
-    private int id;
+    private Long id;
     private String name;
     private String ean;
     private ClassOfGood classOfGood;
     private Brand manufacturer;
 
-    public ProductJSON(int id, String name, String ean, ClassOfGood classOfGood, Brand manufacturer) {
+    public ProductJSON(Long id, String name, String ean, ClassOfGood classOfGood, Brand manufacturer) {
         this.id = id;
         this.name = name;
         this.ean = ean;
@@ -55,11 +49,11 @@ public class ProductJSON {
         return result;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -10,7 +10,7 @@ import com.ufpr.campaigneer.model.AddressState;
 
 public class AddressStateJSON {
 
-    private int id;
+    private Long id;
     private String name;
     private String code;
     private AddressCountryJSON countryJSON;
@@ -43,11 +43,11 @@ public class AddressStateJSON {
         return json;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

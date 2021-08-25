@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -34,12 +35,18 @@ public class ParticipationController {
         return ResponseEntity.ok(ParticipationJSON.map(result));
     }
 
-    @PutMapping("/")
-    public ResponseEntity<ParticipationJSON> update(@RequestBody ParticipationJSON json) throws NotFoundException {
-        logger.debug("Received request to update Participation for client: " + json.getEmail());
+    @PutMapping("/{id}/")
+    public ResponseEntity<ParticipationJSON> update(@PathVariable(value = "id") Long id, @RequestBody ParticipationJSON json) throws NotFoundException {
+        logger.debug("Received request to update Participation for client: " + id);
         Participation result = service.update(ParticipationJSON.mapJson(json))
                 .orElseThrow(() -> new NotFoundException("No Participation found for client: " + json.getEmail()));
         return ResponseEntity.ok(ParticipationJSON.map(result));
+    }
+
+    @PutMapping("/{id}/invoice")
+    public ResponseEntity<ParticipationJSON> uploadInvoice(@PathVariable(value = "id") Long id, @RequestBody MultipartFile invoice) {
+        logger.debug("Received request to update Participation for client: " + id);
+        return null;
     }
 
 }

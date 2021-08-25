@@ -36,5 +36,6 @@ public interface AddressService {
     Optional<Address> updateAddress(Address address);
     void deleteAddress(Address address);
 
+    Optional<Address> findById(Long id);
     Optional<Address> findByPostalCodeAndNumber(String postalCode, int number);
 }

@@ -4,6 +4,7 @@ import com.ufpr.campaigneer.model.Address;
 import com.ufpr.campaigneer.model.Campaign;
 import com.ufpr.campaigneer.model.Participation;
 import com.ufpr.campaigneer.model.Product;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 
@@ -15,7 +16,7 @@ import java.util.Set;
 
 public class ParticipationJSON {
 
-    private int id;
+    private Long id;
     private String name;
     private String lastName;
     private String email;
@@ -23,8 +24,9 @@ public class ParticipationJSON {
     private Set<Address> addresses;
     private Set<Product> products;
     private Campaign triggeredCampaign;
+    private String invoice64;
 
-    public ParticipationJSON(int id, String name, String lastName, String email, String contact, Set<Address> addresses, Set<Product> products, Campaign triggeredCampaign) {
+    public ParticipationJSON(Long id, String name, String lastName, String email, String contact, Set<Address> addresses, Set<Product> products, Campaign triggeredCampaign) {
         this.id = id;
         this.name = name;
         this.lastName = lastName;
@@ -64,11 +66,11 @@ public class ParticipationJSON {
         return json;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

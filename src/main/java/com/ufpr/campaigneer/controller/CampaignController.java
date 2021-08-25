@@ -1,10 +1,8 @@
 package com.ufpr.campaigneer.controller;
 
 import com.ufpr.campaigneer.json.CampaignJSON;
-import com.ufpr.campaigneer.json.ProductJSON;
 import com.ufpr.campaigneer.model.Campaign;
 import com.ufpr.campaigneer.service.CampaignService;
-import com.ufpr.campaigneer.service.ProductService;
 import javassist.NotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -48,7 +46,7 @@ public class CampaignController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Integer> delete(@RequestBody CampaignJSON json) throws SQLException {
+    public ResponseEntity<Long> delete(@RequestBody CampaignJSON json) throws SQLException {
         logger.debug("Received request to delete Campaign with code: " + json.getCode());
         try {
             service.delete(CampaignJSON.mapJson(json));

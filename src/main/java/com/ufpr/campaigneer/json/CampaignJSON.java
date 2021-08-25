@@ -17,7 +17,7 @@ import java.util.Set;
 
 public class CampaignJSON {
 
-    private int id;
+    private Long id;
     private String name;
     private String code;
     private Brand promoter;
@@ -31,7 +31,7 @@ public class CampaignJSON {
     private Set<AddressCountry> validLocations;
     private CampaignType campaignType;
 
-    public CampaignJSON(int id, String name, String code, Brand promoter, LocalDate purchaseFrom, LocalDate purchaseUntil, LocalDate validFrom, LocalDate validUntil, Set<Product> participatingProducts, String participatingTraders, Set<AddressCountry> validLocations, CampaignType campaignType) {
+    public CampaignJSON(Long id, String name, String code, Brand promoter, LocalDate purchaseFrom, LocalDate purchaseUntil, LocalDate validFrom, LocalDate validUntil, Set<Product> participatingProducts, String participatingTraders, Set<AddressCountry> validLocations, CampaignType campaignType) {
         this.id = id;
         this.name = name;
         this.code = code;
@@ -81,11 +81,11 @@ public class CampaignJSON {
         return result;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

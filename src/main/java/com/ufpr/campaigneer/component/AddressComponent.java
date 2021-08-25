@@ -97,6 +97,11 @@ public class AddressComponent implements AddressService {
     }
 
     @Override
+    public Optional<Address> findById(Long id) {
+        return Optional.ofNullable(dao.findById(id));
+    }
+
+    @Override
     public Optional<Address> findByPostalCodeAndNumber(String postalCode, int number) {
         return Optional.ofNullable(dao.findByPostalCodeAndNumber(postalCode, number));
     }

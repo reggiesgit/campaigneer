@@ -46,7 +46,7 @@ public class BrandController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Integer> delete(@RequestBody BrandJSON json) throws SQLException {
+    public ResponseEntity<Long> delete(@RequestBody BrandJSON json) throws SQLException {
         try {
             logger.debug("Received request to delete Brand with name: " + json.getName());
             service.delete(BrandJSON.mapJson(json));

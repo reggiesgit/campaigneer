@@ -17,6 +17,7 @@ public class Participation extends BasicModel {
     private String lastName;
     private String email;
     private String contact;
+    private String invoice64;
     @ManyToMany(targetEntity = Address.class, cascade = CascadeType.ALL,
             fetch = FetchType.EAGER)
     @JoinTable(name="participation_address",
@@ -33,11 +34,12 @@ public class Participation extends BasicModel {
     @JoinColumn(name = "campaign_id", foreignKey = @ForeignKey(name ="campaign_fk"))
     private Campaign triggeredCampaign;
 
-    public Participation(String name, String lastName, String email, String contact, Set<Address> addresses, Set<Product> products, Campaign triggeredCampaign) {
+    public Participation(String name, String lastName, String email, String contact, String invoice64, Set<Address> addresses, Set<Product> products, Campaign triggeredCampaign) {
         this.name = name;
         this.lastName = lastName;
         this.email = email;
         this.contact = contact;
+        this.invoice64 = invoice64;
         this.addresses = addresses;
         this.products = products;
         this.triggeredCampaign = triggeredCampaign;
@@ -76,6 +78,14 @@ public class Participation extends BasicModel {
 
     public void setContact(String contact) {
         this.contact = contact;
+    }
+
+    public String getInvoice64() {
+        return invoice64;
+    }
+
+    public void setInvoice64(String invoice64) {
+        this.invoice64 = invoice64;
     }
 
     public Set<Address> getAddresses() {

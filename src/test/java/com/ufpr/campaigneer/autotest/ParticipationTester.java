@@ -47,9 +47,10 @@ public class ParticipationTester {
     }
 
     public Participation defaultParticipation() {
-        Participation part = new Participation();
-//        part.setAddresses(new HashSet<>());
-//        part.setProducts(new HashSet<>());
+        Participation part = component.findByEmail("regisandre@ufpr.br").orElse(new Participation());
+        if (part.getId() != null) {
+            return part;
+        }
         part.setName("Regis");
         part.setLastName("Gaboardi");
         part.setEmail("regisandre@ufpr.br");

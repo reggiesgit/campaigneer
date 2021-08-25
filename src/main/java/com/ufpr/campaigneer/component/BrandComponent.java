@@ -34,6 +34,11 @@ public class BrandComponent implements BrandService {
     }
 
     @Override
+    public Optional<Brand> findById(Long id) {
+        return Optional.ofNullable(dao.findById(id));
+    }
+
+    @Override
     public Optional<Brand> findByName(String name) {
         return Optional.ofNullable(dao.findByName(name));
     }

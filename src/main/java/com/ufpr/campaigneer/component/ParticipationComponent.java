@@ -32,4 +32,14 @@ public class ParticipationComponent implements ParticipationService {
     public void delete(Participation participation) {
         dao.delete(participation);
     }
+
+    @Override
+    public Optional<Participation> findById(Long id) {
+        return Optional.ofNullable(dao.findById(id));
+    }
+
+    @Override
+    public Optional<Participation> findByEmail(String email) {
+        return Optional.empty();
+    }
 }

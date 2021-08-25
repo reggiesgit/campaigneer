@@ -38,7 +38,10 @@ public class CampaignTester {
     public Campaign defaultCampaign() {
         Product product = productHelper.defaultProduct();
         Address local = product.getManufacturer().findMainAddress();
-        Campaign campaign = new Campaign();
+        Campaign campaign = component.findByCode("2020_UFPR_ENG_SOFTWARE").orElse(new Campaign());
+        if (campaign.getId() != null) {
+            return campaign;
+        }
         campaign.setName("Engenharia de Software");
         campaign.setCode("2020_UFPR_ENG_SOFTWARE");
         campaign.setCampaignType(CampaignType.WARRANTY);

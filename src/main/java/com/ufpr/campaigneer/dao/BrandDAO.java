@@ -27,12 +27,16 @@ public class BrandDAO {
             session = HibernateUtils.initSession();
             session.beginTransaction();
             brand.setCreated(new Timestamp(new Date().getTime()));
-            brand.setId((Integer) session.save(brand));
+            brand.setId((Long) session.save(brand));
             session.getTransaction().commit();
             return brand;
         } finally {
             session.close();
         }
+    }
+
+    public Brand findById(Long id) {
+        return session.load(Brand.class, id);
     }
 
     public Brand findByName(String brandName) {
@@ -149,4 +153,5 @@ public class BrandDAO {
             session.close();
         }
     }
+
 }

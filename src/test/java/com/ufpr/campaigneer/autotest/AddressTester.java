@@ -33,7 +33,7 @@ public class AddressTester {
     public AddressCountry defaultCountry() {
         AddressCountry country = component.findByCountryCode("BR")
                 .orElse(new AddressCountry("Brasil","BR"));
-        if (country.getId() > 0) {
+        if (country.getId() != null) {
             return country;
         }
         return component.createCountry(country).orElseThrow();
@@ -42,7 +42,7 @@ public class AddressTester {
     public AddressState defaultState() {
         AddressState state = component.findByStateCodeAndCountryCode("PR", "BR")
                 .orElse(new AddressState("Parana", "PR", defaultCountry()));
-        if (state.getId() > 0) {
+        if (state.getId() != null) {
             return state;
         }
         return component.createState(state).orElse(null);
@@ -51,7 +51,7 @@ public class AddressTester {
     public AddressCity defaultCity() {
         AddressCity city = component.findByCityNameAndStateCode("Curitiba", "PR")
                 .orElse(new AddressCity("Curitiba", defaultState()));
-        if (city.getId() > 0) {
+        if (city.getId() != null) {
             return city;
         }
         return dao.createCity(city);

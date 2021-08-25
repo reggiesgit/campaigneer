@@ -1,9 +1,6 @@
 package com.ufpr.campaigneer.dao;
 
-import com.ufpr.campaigneer.model.Address;
-import com.ufpr.campaigneer.model.AddressCity;
-import com.ufpr.campaigneer.model.AddressCountry;
-import com.ufpr.campaigneer.model.AddressState;
+import com.ufpr.campaigneer.model.*;
 import com.ufpr.campaigneer.utils.HibernateUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -23,12 +20,16 @@ public class AddressDAO {
 
     private Session session;
 
+    public Address findById(Long id) {
+        return session.load(Address.class, id);
+    }
+
     public AddressCountry createCountry(AddressCountry country) {
         try {
             session = HibernateUtils.initSession();
             session.beginTransaction();
             country.setCreated(new Timestamp(new Date().getTime()));
-            country.setId((Integer) session.save(country));
+            country.setId((Long) session.save(country));
             session.getTransaction().commit();
             return country;
         } finally {
@@ -115,7 +116,7 @@ public class AddressDAO {
             session = HibernateUtils.initSession();
             session.beginTransaction();
             state.setCreated(new Timestamp(new Date().getTime()));
-            state.setId((Integer) session.save(state));
+            state.setId((Long) session.save(state));
             session.getTransaction().commit();
             return state;
         } finally {
@@ -208,7 +209,7 @@ public class AddressDAO {
             session = HibernateUtils.initSession();
             session.beginTransaction();
             city.setCreated(new Timestamp(new Date().getTime()));
-            city.setId((Integer) session.save(city));
+            city.setId((Long) session.save(city));
             session.getTransaction().commit();
             return city;
         } finally {
@@ -297,7 +298,7 @@ public class AddressDAO {
             session = HibernateUtils.initSession();
             session.beginTransaction();
             address.setCreated(new Timestamp(new Date().getTime()));
-            address.setId((Integer) session.save(address));
+            address.setId((Long) session.save(address));
             session.getTransaction().commit();
             return address;
         } finally {

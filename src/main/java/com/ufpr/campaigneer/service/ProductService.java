@@ -16,7 +16,9 @@ public interface ProductService {
 
     Optional<Product> create(Product product);
     Optional<Product> update(Product product);
+    void delete(Long id);
     void delete(Product product);
 
     Optional<Product> findByEAN(String ean);
+    Optional<Product> findById(Long id);
 }

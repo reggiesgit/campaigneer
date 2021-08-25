@@ -29,6 +29,12 @@ public class ProductComponent implements ProductService {
     }
 
     @Override
+    public void delete(Long id) {
+        Product product =  dao.findById(id);
+        dao.delete(product);
+    }
+
+    @Override
     public void delete(Product product) {
         dao.delete(product);
     }
@@ -36,5 +42,10 @@ public class ProductComponent implements ProductService {
     @Override
     public Optional<Product> findByEAN(String ean) {
         return Optional.ofNullable(dao.findByEAN(ean));
+    }
+
+    @Override
+    public Optional<Product> findById(Long id) {
+        return Optional.ofNullable(dao.findById(id));
     }
 }

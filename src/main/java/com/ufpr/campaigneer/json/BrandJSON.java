@@ -13,11 +13,11 @@ import java.util.Set;
 
 public class BrandJSON {
 
-    private int id;
+    private Long id;
     private String name;
     private Set<AddressJSON> addresses;
 
-    public BrandJSON(int id, String name, Set<AddressJSON> addresses) {
+    public BrandJSON(Long id, String name, Set<AddressJSON> addresses) {
         this.id = id;
         this.name = name;
         this.addresses = addresses;
@@ -58,11 +58,11 @@ public class BrandJSON {
         return result;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

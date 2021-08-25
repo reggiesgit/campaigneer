@@ -18,5 +18,6 @@ public interface ParticipationService {
     Optional<Participation> update(Participation participation);
     void delete(Participation participation);
 
+    Optional<Participation> findById(Long id);
     Optional<Participation> findByEmail(String email);
 }
