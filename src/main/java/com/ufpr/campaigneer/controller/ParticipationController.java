@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 /**
  * Created by Regis Gaboardi (@gmail.com)
  * Provided with Love and IntelliJ IDEA for campaigneer.
@@ -39,14 +41,16 @@ public class ParticipationController {
     public ResponseEntity<ParticipationJSON> update(@PathVariable(value = "id") Long id, @RequestBody ParticipationJSON json) throws NotFoundException {
         logger.debug("Received request to update Participation for client: " + id);
         Participation result = service.update(ParticipationJSON.mapJson(json))
-                .orElseThrow(() -> new NotFoundException("No Participation found for client: " + json.getEmail()));
+                .orElseThrow(() -> new NotFoundException("No Participation found for client: " + id));
         return ResponseEntity.ok(ParticipationJSON.map(result));
     }
 
     @PutMapping("/{id}/invoice")
-    public ResponseEntity<ParticipationJSON> uploadInvoice(@PathVariable(value = "id") Long id, @RequestBody MultipartFile invoice) {
+    public ResponseEntity<ParticipationJSON> uploadInvoice(@PathVariable(value = "id") Long id, @RequestParam MultipartFile invoice) throws NotFoundException, IOException {
         logger.debug("Received request to update Participation for client: " + id);
-        return null;
+        Participation result = service.uploadInvoice(id, invoice)
+                .orElseThrow(() -> new NotFoundException("No Participation found for client: " + id));
+        return ResponseEntity.ok(ParticipationJSON.map(result));
     }
 
 }
