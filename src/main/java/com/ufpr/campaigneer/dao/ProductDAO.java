@@ -37,8 +37,9 @@ public class ProductDAO {
         try {
             session = HibernateUtils.initSession();
             session.beginTransaction();
-            return session.load(Product.class, id);
+            return session.get(Product.class, id);
         } finally {
+            session.getTransaction().commit();
             session.close();
         }
     }

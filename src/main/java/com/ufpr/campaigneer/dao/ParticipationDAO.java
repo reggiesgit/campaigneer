@@ -1,13 +1,15 @@
 package com.ufpr.campaigneer.dao;
 
-import com.ufpr.campaigneer.model.Brand;
 import com.ufpr.campaigneer.model.Campaign;
 import com.ufpr.campaigneer.model.Participation;
 import com.ufpr.campaigneer.utils.HibernateUtils;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 
+import javax.servlet.http.Part;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -33,7 +35,33 @@ public class ParticipationDAO {
     }
 
     public Participation findById(Long id) {
-        return session.load(Participation.class, id);
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            Participation result = session.get(Participation.class, id);
+            return result;
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
+    }
+
+    public Participation findByEmail(String email) {
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            Query query = session
+                    .createQuery("from Participation part " +
+                            "where part.email = :email " +
+                            "and part.deleted is null");
+            query.setParameter("email", email);
+            query.setMaxResults(1);
+            Participation result = (Participation) query.uniqueResult();
+            return result;
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
     }
 
     public Participation update(Participation participation) {
@@ -66,6 +94,29 @@ public class ParticipationDAO {
             session = HibernateUtils.initSession();
             session.beginTransaction();
             session.delete(participation);
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
+    }
+
+    public List<Participation> findTwinParticipations(Participation part) {
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            Query query = session
+                    .createQuery("from Participation part " +
+                            "where part.name = :otherName " +
+                            "and part.lastName = :otherLastName " +
+                            "and part.email = :otherEmail " +
+                            "and part.triggeredCampaign.id = :otherCampaign " +
+                            "and part.deleted is null ");
+            query.setParameter("otherName", part.getName());
+            query.setParameter("otherLastName", part.getLastName());
+            query.setParameter("otherEmail", part.getEmail());
+            query.setParameter("otherCampaign", part.getTriggeredCampaign().getId());
+            List<Participation> result = query.getResultList();
+            return result;
         } finally {
             session.getTransaction().commit();
             session.close();

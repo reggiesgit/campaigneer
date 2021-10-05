@@ -137,6 +137,24 @@ public class AddressDAO {
         }
     }
 
+    public AddressState findStateByCode(String stateCode) {
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            Query query = session
+                    .createQuery("from AddressState state " +
+                            "where state.code = :stateCode " +
+                            "and state.deleted is null ");
+            query.setParameter("stateCode", stateCode);
+            query.setMaxResults(1);
+            AddressState state = (AddressState) query.uniqueResult();
+            return state;
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
+    }
+
     public AddressState findByStateCodeAndCountryCode(String stateCode, String countryCode) {
         try {
             session = HibernateUtils.initSession();

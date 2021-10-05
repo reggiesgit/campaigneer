@@ -1,6 +1,13 @@
 package com.ufpr.campaigneer.model;
 
+import com.ufpr.campaigneer.enums.CampaignStatus;
+import org.apache.tomcat.jni.Local;
+import org.hibernate.annotations.ColumnDefault;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -17,14 +24,17 @@ public class Participation extends BasicModel {
     private String lastName;
     private String email;
     private String contact;
+    @NotNull
+    @ColumnDefault("0")
+    private LocalDate invoiceDate;
     private String invoice64;
     @ManyToMany(targetEntity = Address.class, cascade = CascadeType.ALL,
             fetch = FetchType.EAGER)
     @JoinTable(name="participation_address",
             joinColumns = { @JoinColumn(name = "participation_id", foreignKey = @ForeignKey(name ="participation_fk")) },
-            inverseJoinColumns = { @JoinColumn(name = "address_id", foreignKey = @ForeignKey(name ="address_fk")) })
+            inverseJoinColumns = { @JoinColumn(name = "address_id", foreignKey = @ForeignKey(name ="participation_address_fk")) })
     private Set<Address> addresses;
-    @OneToMany(targetEntity = Product.class,
+    @ManyToMany(targetEntity = Product.class,
             fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "participation_products",
             joinColumns = {@JoinColumn(name = "participation_id", foreignKey = @ForeignKey(name = "participation_product_fk"))},
@@ -33,12 +43,17 @@ public class Participation extends BasicModel {
     @OneToOne
     @JoinColumn(name = "campaign_id", foreignKey = @ForeignKey(name ="campaign_fk"))
     private Campaign triggeredCampaign;
+    @Enumerated(EnumType.ORDINAL)
+    @NotNull
+    @ColumnDefault("0")
+    private CampaignStatus campaignStatus;
 
-    public Participation(String name, String lastName, String email, String contact, String invoice64, Set<Address> addresses, Set<Product> products, Campaign triggeredCampaign) {
+    public Participation(String name, String lastName, String email, String contact, LocalDate invoiceDate, String invoice64, Set<Address> addresses, Set<Product> products, Campaign triggeredCampaign) {
         this.name = name;
         this.lastName = lastName;
         this.email = email;
         this.contact = contact;
+        this.invoiceDate = invoiceDate;
         this.invoice64 = invoice64;
         this.addresses = addresses;
         this.products = products;
@@ -80,6 +95,14 @@ public class Participation extends BasicModel {
         this.contact = contact;
     }
 
+    public LocalDate getInvoiceDate() {
+        return invoiceDate;
+    }
+
+    public void setInvoiceDate(LocalDate invoiceDate) {
+        this.invoiceDate = invoiceDate;
+    }
+
     public String getInvoice64() {
         return invoice64;
     }
@@ -110,5 +133,13 @@ public class Participation extends BasicModel {
 
     public void setTriggeredCampaign(Campaign triggeredCampaign) {
         this.triggeredCampaign = triggeredCampaign;
+    }
+
+    public void setCampaignStatus(CampaignStatus campaignStatus) {
+        this.campaignStatus = campaignStatus;
+    }
+
+    public CampaignStatus getCampaignStatus() {
+        return campaignStatus;
     }
 }

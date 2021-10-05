@@ -8,10 +8,10 @@ package com.ufpr.campaigneer.enums;
 
 public enum ClassOfGood {
 
-    TELEVISION(1, "ELECTRONIC"),
-    SMARTPHONE(2, "SMARTPHONE"),
-    LAPTOP(3, "LAPTOP"),
-    SONDBAR(4, "SOUNDBAR");
+    TELEVISION(0, "ELECTRONIC"),
+    SMARTPHONE(1, "SMARTPHONE"),
+    LAPTOP(2, "LAPTOP"),
+    SOUNDBAR(3, "SOUNDBAR");
 
     private int chave;
     private String valor;

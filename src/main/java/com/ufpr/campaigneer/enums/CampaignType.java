@@ -8,9 +8,9 @@ package com.ufpr.campaigneer.enums;
 
 public enum CampaignType {
 
-    GIFT(1, "GIFT"),
-    CASHBACK(2, "CASHBACK"),
-    WARRANTY(3, "WARRANTY");
+    GIFT(0, "GIFT"),
+    CASHBACK(1, "CASHBACK"),
+    WARRANTY(2, "WARRANTY");
 
     private int chave;
     private String valor;

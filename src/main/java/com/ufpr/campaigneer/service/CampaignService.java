@@ -1,8 +1,11 @@
 package com.ufpr.campaigneer.service;
 
+import com.ufpr.campaigneer.model.Address;
 import com.ufpr.campaigneer.model.Campaign;
+import com.ufpr.campaigneer.model.Product;
 import org.jvnet.hk2.annotations.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -20,4 +23,7 @@ public interface CampaignService {
 
     Optional<Campaign> findByid(Long id);
     Optional<Campaign> findByCode(String code);
+
+    Optional<Campaign> updateProducts(Long id, List<Product> products);
+    Optional<Campaign> updateLocations(List<Address> locations);
 }

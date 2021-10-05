@@ -188,9 +188,8 @@ public class AddressTester {
     @Order(13)
     public void createAddress() {
         Address address = new Address();
-        AddressCity city = defaultCity();
 
-        address.setCity(city);
+        address.setCity(defaultCity());
         address.setAddressType(AddressType.BRAND_MAIN);
         address.setComplement("SEPT");
         address.setStreetName("Dr. Alcides Arcoverde");

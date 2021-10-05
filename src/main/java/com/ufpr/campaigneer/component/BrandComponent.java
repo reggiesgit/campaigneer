@@ -1,10 +1,13 @@
 package com.ufpr.campaigneer.component;
 
+import com.ufpr.campaigneer.dao.AddressDAO;
 import com.ufpr.campaigneer.dao.BrandDAO;
+import com.ufpr.campaigneer.model.Address;
 import com.ufpr.campaigneer.model.Brand;
 import com.ufpr.campaigneer.service.BrandService;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 /**
@@ -17,9 +20,14 @@ import java.util.Optional;
 public class BrandComponent implements BrandService {
 
     BrandDAO dao = new BrandDAO();
+    AddressComponent addressComponent = new AddressComponent();
 
     @Override
     public Optional<Brand> create(Brand brand) {
+        Address json = brand.getAddresses().stream().findFirst().orElse(new Address());
+        Address entity = addressComponent.findByPostalCodeAndNumber(json.getPostalCode(), json.getStreetNumber()).orElseThrow();
+        brand.getAddresses().clear();
+        brand.getAddresses().add(entity);
         return Optional.ofNullable(dao.create(brand));
     }
 

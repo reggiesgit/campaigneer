@@ -31,22 +31,25 @@ public class BrandController {
     private BrandService service;
 
     @PostMapping("/")
-    public ResponseEntity<BrandJSON> createBrand(@RequestBody BrandJSON json) throws SQLException {
+    public ResponseEntity<BrandJSON> createBrand(@RequestBody BrandJSON json) throws NotFoundException {
         logger.debug("Received request to create Brand with name: " + json.getName());
+        if (json.getAddresses() == null) {
+            throw new NotFoundException("Failed to map Brand. Address is missing.");
+        }
         Brand result = service.create(BrandJSON.mapJson(json)).orElse(null);
         return ResponseEntity.ok(BrandJSON.map(result));
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<BrandJSON> update(@RequestBody BrandJSON json) throws SQLException, NotFoundException {
+    @PutMapping("/{id}/")
+    public ResponseEntity<BrandJSON> update(@PathVariable(value = "id") Long id, @RequestBody BrandJSON json) throws SQLException, NotFoundException {
         logger.debug("Received request to update Brand with name: " + json.getName());
         Brand result = service.update(BrandJSON.mapJson(json))
                 .orElseThrow(() -> new NotFoundException("No Brand found with name: " + json.getName()));
         return ResponseEntity.ok(BrandJSON.map(result));
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Long> delete(@RequestBody BrandJSON json) throws SQLException {
+    @DeleteMapping("/{id}/")
+    public ResponseEntity<Long> delete(@PathVariable(value = "id") Long id, @RequestBody BrandJSON json) throws SQLException {
         try {
             logger.debug("Received request to delete Brand with name: " + json.getName());
             service.delete(BrandJSON.mapJson(json));

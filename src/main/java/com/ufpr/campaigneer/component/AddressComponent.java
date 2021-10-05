@@ -1,6 +1,7 @@
 package com.ufpr.campaigneer.component;
 
 import com.ufpr.campaigneer.dao.AddressDAO;
+import com.ufpr.campaigneer.enums.AddressType;
 import com.ufpr.campaigneer.model.Address;
 import com.ufpr.campaigneer.model.AddressCity;
 import com.ufpr.campaigneer.model.AddressCountry;
@@ -8,7 +9,9 @@ import com.ufpr.campaigneer.model.AddressState;
 import com.ufpr.campaigneer.service.AddressService;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.NotFoundException;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -43,6 +46,8 @@ public class AddressComponent implements AddressService {
 
     @Override
     public Optional<AddressState> createState(AddressState state) {
+        state.setCountry(findByCountryCode(state.getCountry().getCode())
+                .orElseThrow(() -> new NotFoundException("Failed to map State. Country is missing.")));
         return Optional.ofNullable(dao.createState(state));
     }
 
@@ -61,8 +66,14 @@ public class AddressComponent implements AddressService {
         return Optional.ofNullable(dao.findByStateCodeAndCountryCode(stateCode, countryCode));
     }
 
+    public Optional<AddressState> findStateByCode(String code) {
+        return Optional.ofNullable(dao.findStateByCode(code));
+    }
+
     @Override
     public Optional<AddressCity> createCity(AddressCity city) {
+        city.setState(findStateByCode(city.getState().getCode())
+                .orElseThrow(() -> new NotFoundException("Failed to map State. Country is missing.")));
         return Optional.ofNullable(dao.createCity(city));
     }
 
@@ -83,6 +94,8 @@ public class AddressComponent implements AddressService {
 
     @Override
     public Optional<Address> createAddress(Address address) {
+        address.setCity(findByCityNameAndStateCode(address.getCity().getName(), address.getCity().getState().getCode())
+                .orElseThrow(() -> new NotFoundException("Failed to map Address. City is missing.")));
         return Optional.ofNullable(dao.createAddress(address));
     }
 
@@ -106,4 +119,28 @@ public class AddressComponent implements AddressService {
         return Optional.ofNullable(dao.findByPostalCodeAndNumber(postalCode, number));
     }
 
+    public static Address findBillingAddress(Set<Address> addresses) {
+        for (Address each : addresses) {
+            if (AddressType.BILLING_ADDRESS.equals(each.getAddressType())) {
+                return each;
+            }
+        }
+        return addresses.stream().findFirst().orElseThrow(() -> new NotFoundException("Failed to create Participation. Couldn't find any Address."));
+    }
+
+    public Address createParticipationAddress(Address address) {
+        try {
+            Address billing = new Address();
+            billing.setAddressType(AddressType.BILLING_ADDRESS);
+            billing.setStreetName(address.getStreetName());
+            billing.setStreetNumber(address.getStreetNumber());
+            billing.setPostalCode(address.getPostalCode());
+            billing.setCity(findByCityNameAndStateCode(address.getCity().getName(), address.getCity().getState().getCode())
+                    .orElseThrow(() -> new NotFoundException("Failed to create Address for Participation. Couldn't find City.")));
+            billing.setComplement(address.getComplement());
+            return createAddress(billing).orElseThrow(() -> new RuntimeException("Failed to create Address for Participation. Couldn't persist Address."));
+        } catch(Exception e) {
+            throw new RuntimeException("Failed to create Address for Participation. Incomplete data.");
+        }
+    }
 }

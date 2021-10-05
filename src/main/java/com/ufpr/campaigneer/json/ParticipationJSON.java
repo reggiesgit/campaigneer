@@ -1,11 +1,13 @@
 package com.ufpr.campaigneer.json;
 
+import com.ufpr.campaigneer.enums.CampaignStatus;
 import com.ufpr.campaigneer.model.Address;
 import com.ufpr.campaigneer.model.Campaign;
 import com.ufpr.campaigneer.model.Participation;
 import com.ufpr.campaigneer.model.Product;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -24,18 +26,11 @@ public class ParticipationJSON {
     private Set<Address> addresses;
     private Set<Product> products;
     private Campaign triggeredCampaign;
+    private CampaignStatus campaignStatus;
+    private LocalDate invoiceDate;
     private String invoice64;
 
-    public ParticipationJSON(Long id, String name, String lastName, String email, String contact, Set<Address> addresses, Set<Product> products, Campaign triggeredCampaign) {
-        this.id = id;
-        this.name = name;
-        this.lastName = lastName;
-        this.email = email;
-        this.contact = contact;
-        this.addresses = addresses;
-        this.products = products;
-        this.triggeredCampaign = triggeredCampaign;
-    }
+
 
     public ParticipationJSON() {
     }
@@ -50,6 +45,9 @@ public class ParticipationJSON {
         result.setAddresses(json.getAddresses());
         result.setProducts(json.getProducts());
         result.setTriggeredCampaign(json.getTriggeredCampaign());
+        result.setCampaignStatus(json.getCampaignStatus());
+        result.setInvoice64(json.getInvoice64());
+        result.setInvoiceDate(json.getInvoiceDate());
         return result;
     }
 
@@ -63,6 +61,9 @@ public class ParticipationJSON {
         json.setAddresses(participation.getAddresses());
         json.setProducts(participation.getProducts());
         json.setTriggeredCampaign(participation.getTriggeredCampaign());
+        json.setCampaignStatus(participation.getCampaignStatus());
+        json.setInvoiceDate(participation.getInvoiceDate());
+
         return json;
     }
 
@@ -126,7 +127,31 @@ public class ParticipationJSON {
         return triggeredCampaign;
     }
 
+    public CampaignStatus getCampaignStatus() {
+        return campaignStatus;
+    }
+
+    public void setCampaignStatus(CampaignStatus campaignStatus) {
+        this.campaignStatus = campaignStatus;
+    }
+
     public void setTriggeredCampaign(Campaign triggeredCampaign) {
         this.triggeredCampaign = triggeredCampaign;
+    }
+
+    public LocalDate getInvoiceDate() {
+        return invoiceDate;
+    }
+
+    public void setInvoiceDate(LocalDate invoiceDate) {
+        this.invoiceDate = invoiceDate;
+    }
+
+    public String getInvoice64() {
+        return invoice64;
+    }
+
+    public void setInvoice64(String invoice64) {
+        this.invoice64 = invoice64;
     }
 }

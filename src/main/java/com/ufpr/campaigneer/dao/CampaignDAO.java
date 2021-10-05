@@ -2,6 +2,7 @@ package com.ufpr.campaigneer.dao;
 
 import com.ufpr.campaigneer.model.Brand;
 import com.ufpr.campaigneer.model.Campaign;
+import com.ufpr.campaigneer.model.Participation;
 import com.ufpr.campaigneer.model.Product;
 import com.ufpr.campaigneer.utils.HibernateUtils;
 import org.hibernate.Session;
@@ -33,7 +34,15 @@ public class CampaignDAO {
         }
     }
     public Campaign findById(Long id) {
-        return session.load(Campaign.class, id);
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            Campaign result = session.get(Campaign.class, id);
+            return result;
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
     }
 
     public Campaign findByCode(String code) {
@@ -107,4 +116,26 @@ public class CampaignDAO {
             session.close();
         }
     }
+
+    public Campaign findForParticipation(Participation part) {
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            Product product = part.getProducts().stream().findFirst()
+                    .orElseThrow(() -> new RuntimeException("Failed to process Participation. Couldn't find any products."));
+            Query query = session
+                    .createQuery("from Campaign campaign " +
+                            "join fetch campaign.participatingProducts as products " +
+                            "where products.id = :productId " +
+                            "and campaign.deleted is null");
+            query.setParameter("productId", product.getId());
+            query.setMaxResults(1);
+            Campaign campaign = (Campaign) query.uniqueResult();
+            return campaign;
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
+    }
+
 }

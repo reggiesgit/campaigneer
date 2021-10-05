@@ -31,14 +31,14 @@ public class ProductController {
     private ProductService service;
 
     @PostMapping("/")
-    public ResponseEntity<ProductJSON> create(@RequestBody ProductJSON json) throws SQLException {
+    public ResponseEntity<ProductJSON> create(@RequestBody ProductJSON json) throws SQLException, NotFoundException {
         logger.debug("Received request to create Product with ean: " + json.getEan());
         Product result = service.create(ProductJSON.mapJson(json)).orElse(null);
         return ResponseEntity.ok(ProductJSON.map(result));
     }
 
-    @PutMapping("/")
-    public ResponseEntity<ProductJSON> update(@RequestBody ProductJSON json) throws NotFoundException {
+    @PutMapping("/{id}/")
+    public ResponseEntity<ProductJSON> update(@PathVariable(value = "id") Long id, @RequestBody ProductJSON json) throws NotFoundException {
         logger.debug("Received request to update Product with ean: " + json.getEan());
         Product result = service.update(ProductJSON.mapJson(json))
                 .orElseThrow(() -> new NotFoundException("No Product found with ean: " + json.getEan()));

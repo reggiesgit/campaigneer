@@ -1,5 +1,6 @@
 package com.ufpr.campaigneer.service;
 
+import com.ufpr.campaigneer.model.CampaignViolations;
 import com.ufpr.campaigneer.model.Participation;
 import org.jvnet.hk2.annotations.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +22,11 @@ public interface ParticipationService {
     void delete(Participation participation);
 
     Optional<Participation> findById(Long id);
+    Optional<Participation> findByEmail(String email);
 
     Optional<Participation> uploadInvoice(Long id, MultipartFile invoice) throws IOException;
+
+    Participation reprocess(Long id);
+
+    Participation uptadeVerification(Long id, CampaignViolations violations);
 }

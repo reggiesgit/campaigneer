@@ -4,6 +4,9 @@ import com.ufpr.campaigneer.enums.ClassOfGood;
 import com.ufpr.campaigneer.model.Brand;
 import com.ufpr.campaigneer.model.Product;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Regis Gaboardi (@gmail.com)
  * Provided with Love and IntelliJ IDEA for campaigneer.
@@ -33,9 +36,9 @@ public class ProductJSON {
         Product result = new Product();
         result.setId(json.getId());
         result.setName(json.getName());
-        result.setManufacturer(json.getManufacturer());
         result.setClassOfGood(json.getClassOfGood());
         result.setEan(json.getEan());
+        result.setManufacturer(json.getManufacturer());
         return result;
     }
 
@@ -46,6 +49,14 @@ public class ProductJSON {
         result.setManufacturer(product.getManufacturer());
         result.setClassOfGood(product.getClassOfGood());
         result.setEan(product.getEan());
+        return result;
+    }
+
+    public static List<Product> mapJson(List<ProductJSON> json) {
+        List<Product> result = new ArrayList<>();
+        json.forEach(each -> {
+            result.add(mapJson(each));
+        });
         return result;
     }
 

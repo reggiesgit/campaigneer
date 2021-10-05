@@ -2,6 +2,8 @@ package com.ufpr.campaigneer.json;
 
 import com.ufpr.campaigneer.model.AddressCity;
 
+import javax.ws.rs.NotFoundException;
+
 /**
  * Created by Regis Gaboardi (@gmail.com)
  * Provided with Love and IntelliJ IDEA for campaigneer.
@@ -26,7 +28,9 @@ public class AddressCityJSON {
         AddressCity result = new AddressCity();
         result.setId(json.getId());
         result.setName(json.getName());
-        result.setState(AddressStateJSON.map(json.getStateJSON()));
+        if (json.getStateJSON() != null) {
+            result.setState(AddressStateJSON.map(json.getStateJSON()));
+        }
         return result;
     }
 

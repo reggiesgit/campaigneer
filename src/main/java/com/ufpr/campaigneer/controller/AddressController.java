@@ -43,16 +43,16 @@ public class AddressController {
         return ResponseEntity.ok(AddressCountryJSON.map(result));
     }
 
-    @PutMapping("/updateCountry")
-    public ResponseEntity<AddressCountryJSON> updateCountry(@RequestBody AddressCountryJSON json) throws NotFoundException {
+    @PutMapping("/updateCountry/{id}")
+    public ResponseEntity<AddressCountryJSON> updateCountry(@PathVariable(value = "id") Long id, @RequestBody AddressCountryJSON json) throws NotFoundException {
         logger.debug("Received request to update country with code: " + json.getCode());
         AddressCountry result = service.updateCountry(AddressCountryJSON.map(json))
                 .orElseThrow(() -> new NotFoundException("No country found with code: " + json.getCode()));
         return  ResponseEntity.ok(AddressCountryJSON.map(result));
     }
 
-    @DeleteMapping("/deleteCountry")
-    public ResponseEntity<Long> deleteCountry(@RequestBody AddressCountryJSON json) throws SQLException {
+    @DeleteMapping("/deleteCountry/{id}")
+    public ResponseEntity<Long> deleteCountry(@PathVariable(value = "id") Long id, @RequestBody AddressCountryJSON json) throws SQLException {
         logger.debug("Received request to delete country with code: " + json.getCode());
         try {
             service.deleteCountry(AddressCountryJSON.map(json));
@@ -79,16 +79,16 @@ public class AddressController {
         return ResponseEntity.ok(AddressStateJSON.map(result));
     }
 
-    @PutMapping("/updateState")
-    public ResponseEntity<AddressStateJSON> updateState(@RequestBody AddressStateJSON json) throws NotFoundException {
+    @PutMapping("/updateState/{id}")
+    public ResponseEntity<AddressStateJSON> updateState(@PathVariable(value = "id") Long id, @RequestBody AddressStateJSON json) throws NotFoundException {
         logger.debug("Received request to update state with code: " + json.getCode());
         AddressState result = service.updateState(AddressStateJSON.map(json))
                 .orElseThrow(() -> new NotFoundException("No state found with code: " + json.getCode()));
         return ResponseEntity.ok(AddressStateJSON.map(result));
     }
 
-    @DeleteMapping("/deleteState")
-    public ResponseEntity<Long> deleteState(@RequestBody AddressStateJSON json) throws SQLException {
+    @DeleteMapping("/deleteState/{id}")
+    public ResponseEntity<Long> deleteState(@PathVariable(value = "id") Long id, @RequestBody AddressStateJSON json) throws SQLException {
         logger.debug("Received request to delete state with code: " + json.getCode());
         try {
             service.deleteState(AddressStateJSON.map(json));
@@ -109,22 +109,22 @@ public class AddressController {
     }
 
     @PostMapping("/createCity")
-    public ResponseEntity<AddressCityJSON> createCity(@RequestBody AddressCityJSON json) {
+    public ResponseEntity<AddressCityJSON> createCity(@RequestBody AddressCityJSON json) throws NotFoundException {
         logger.debug("Received request to create city with name: " + json.getName());
         AddressCity result = service.createCity(AddressCityJSON.map(json)).orElse(null);
         return ResponseEntity.ok(AddressCityJSON.map(result));
     }
 
-    @PutMapping("/updateCity")
-    public ResponseEntity<AddressCityJSON> updateCity(@RequestBody AddressCityJSON json) throws NotFoundException {
+    @PutMapping("/updateCity/{id}")
+    public ResponseEntity<AddressCityJSON> updateCity(@PathVariable(value = "id") Long id, @RequestBody AddressCityJSON json) throws NotFoundException {
         logger.debug("Received request to update City with code: " + json.getName());
         AddressCity result = service.updateCity(AddressCityJSON.map(json))
                 .orElseThrow(() -> new NotFoundException("No city found with code: " + json.getName()));
         return ResponseEntity.ok(AddressCityJSON.map(result));
     }
 
-    @DeleteMapping("/deleteCity")
-    public ResponseEntity<Long> deleteCity(@RequestBody AddressCityJSON json) throws SQLException {
+    @DeleteMapping("/deleteCity/{id}")
+    public ResponseEntity<Long> deleteCity(@PathVariable(value = "id") Long id, @RequestBody AddressCityJSON json) throws SQLException {
         logger.debug("Received request to delete state with name: " + json.getName());
         try {
             service.deleteCity(AddressCityJSON.map(json));
@@ -146,22 +146,22 @@ public class AddressController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<AddressJSON> createAddress(@RequestBody AddressJSON json) {
+    public ResponseEntity<AddressJSON> createAddress(@RequestBody AddressJSON json) throws NotFoundException {
         logger.debug("Received request to create address with postalcode: " + json.getPostalCode());
         Address result = service.createAddress(AddressJSON.mapJson(json)).orElse(null);
         return ResponseEntity.ok(AddressJSON.map(result));
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<AddressJSON> updateAddress(@RequestBody AddressJSON json) throws NotFoundException {
+    @PutMapping("/{id}/update")
+    public ResponseEntity<AddressJSON> updateAddress(@PathVariable(value = "id") Long id, @RequestBody AddressJSON json) throws NotFoundException {
         logger.debug("Received request to update address with postalcode: " + json.getPostalCode());
         Address  result = service.updateAddress(AddressJSON.mapJson(json))
                 .orElseThrow(() -> new NotFoundException("No City found with address with postalcode: " + json.getPostalCode()));
         return ResponseEntity.ok(AddressJSON.map(result));
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Long> deleteAddress(@RequestBody AddressJSON json) throws SQLException {
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<Long> deleteAddress(@PathVariable(value = "id") Long id, @RequestBody AddressJSON json) throws SQLException {
         try {
             logger.debug("Received request to delete address with postalcode: " + json.getPostalCode());
             service.deleteAddress(AddressJSON.mapJson(json));
@@ -172,5 +172,4 @@ public class AddressController {
         }
         return ResponseEntity.ok(json.getId());
     }
-
 }

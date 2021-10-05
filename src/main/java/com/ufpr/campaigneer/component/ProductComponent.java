@@ -5,7 +5,8 @@ import com.ufpr.campaigneer.model.Product;
 import com.ufpr.campaigneer.service.ProductService;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import javax.ws.rs.NotFoundException;
+import java.util.*;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -17,9 +18,12 @@ import java.util.Optional;
 public class ProductComponent implements ProductService {
 
     ProductDAO dao = new ProductDAO();
+    BrandComponent brandComponent = new BrandComponent();
 
     @Override
     public Optional<Product> create(Product product) {
+        product.setManufacturer(brandComponent.findByName(product.getManufacturer().getName())
+                .orElseThrow(() -> new NotFoundException("Failed to map Product. Manufacturer is missing.")));
         return Optional.ofNullable(dao.create(product));
     }
 
@@ -47,5 +51,14 @@ public class ProductComponent implements ProductService {
     @Override
     public Optional<Product> findById(Long id) {
         return Optional.ofNullable(dao.findById(id));
+    }
+
+    public Set<Product> getProductEntities(List<Product> products) {
+        Set<Product> found = new HashSet<>();
+        products.forEach(each -> {
+            found.add(findByEAN(each.getEan())
+                    .orElseThrow(() -> new NotFoundException("Failed to add Product to Campaign. Couldn't find product with ean: " + each.getEan())));
+        });
+        return found;
     }
 }

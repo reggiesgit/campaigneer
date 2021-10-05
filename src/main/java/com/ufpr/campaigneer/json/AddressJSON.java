@@ -20,15 +20,15 @@ public class AddressJSON {
     private String streetName;
     private int streetNumber;
     private String complement;
-    private AddressCityJSON addressCityJSON;
+    private AddressCityJSON cityJSON;
 
-    public AddressJSON(AddressType addressType, String postalCode, String streetName, int streetNumber, String complement, AddressCityJSON addressCityJSON) {
+    public AddressJSON(AddressType addressType, String postalCode, String streetName, int streetNumber, String complement, AddressCityJSON cityJSON) {
         this.addressType = addressType;
         this.postalCode = postalCode;
         this.streetName = streetName;
         this.streetNumber = streetNumber;
         this.complement = complement;
-        this.addressCityJSON = addressCityJSON;
+        this.cityJSON = cityJSON;
     }
 
     public AddressJSON() {
@@ -42,7 +42,7 @@ public class AddressJSON {
         result.setStreetName(json.getStreetName());
         result.setStreetNumber(json.getStreetNumber());
         result.setComplement(json.getComplement());
-        result.setCity(AddressCityJSON.map(json.getAddressCityJSON()));
+        result.setCity(AddressCityJSON.map(json.getCityJSON()));
         return result;
     }
 
@@ -62,7 +62,7 @@ public class AddressJSON {
         result.setStreetName(address.getStreetName());
         result.setStreetNumber(address.getStreetNumber());
         result.setComplement(address.getComplement());
-        result.setAddressCityJSON(AddressCityJSON.map(address.getCity()));
+        result.setCityJSON(AddressCityJSON.map(address.getCity()));
         return result;
     }
 
@@ -122,11 +122,11 @@ public class AddressJSON {
         this.complement = complement;
     }
 
-    public AddressCityJSON getAddressCityJSON() {
-        return addressCityJSON;
+    public AddressCityJSON getCityJSON() {
+        return cityJSON;
     }
 
-    public void setAddressCityJSON(AddressCityJSON addressCityJSON) {
-        this.addressCityJSON = addressCityJSON;
+    public void setCityJSON(AddressCityJSON cityJSON) {
+        this.cityJSON = cityJSON;
     }
 }

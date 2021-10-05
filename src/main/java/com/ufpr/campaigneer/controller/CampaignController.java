@@ -1,6 +1,7 @@
 package com.ufpr.campaigneer.controller;
 
 import com.ufpr.campaigneer.json.CampaignJSON;
+import com.ufpr.campaigneer.json.ProductJSON;
 import com.ufpr.campaigneer.model.Campaign;
 import com.ufpr.campaigneer.service.CampaignService;
 import javassist.NotFoundException;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -30,24 +32,32 @@ public class CampaignController {
     @Qualifier("campaignComponent")
     private CampaignService service;
 
-    @PostMapping("/create")
+    @PostMapping("/")
     public ResponseEntity<CampaignJSON> create(@RequestBody CampaignJSON json) throws SQLException {
         logger.debug("Received request to create Campaign with name: " + json.getName());
         Campaign created = service.create(CampaignJSON.mapJson(json)).orElse(null);
         return ResponseEntity.ok(CampaignJSON.map(created));
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<CampaignJSON> update(@RequestBody CampaignJSON json) throws SQLException, NotFoundException {
-        logger.debug("Received request to update Campaign with code: " + json.getCode());
+    @PutMapping("/{id}/")
+    public ResponseEntity<CampaignJSON> update(@PathVariable(value = "id") Long id, @RequestBody CampaignJSON json) throws SQLException, NotFoundException {
+        logger.debug("Received request to update Campaign with id: " + id);
         Campaign result = service.update(CampaignJSON.mapJson(json))
                 .orElseThrow(() -> new NotFoundException("No Campaign found with name: " + json.getCode()));
         return ResponseEntity.ok(CampaignJSON.map(result));
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Long> delete(@RequestBody CampaignJSON json) throws SQLException {
-        logger.debug("Received request to delete Campaign with code: " + json.getCode());
+    @PutMapping("/{id}/products/")
+    public ResponseEntity<CampaignJSON> addProducts(@PathVariable(value = "id") Long id, @RequestBody List<ProductJSON> products) throws NotFoundException {
+        logger.debug("Received request to add Products to Campaign with id: " + id);
+        Campaign result = service.updateProducts(id, ProductJSON.mapJson(products))
+                .orElseThrow(() -> new NotFoundException("No Campaign found with id: " + id));
+        return ResponseEntity.ok(CampaignJSON.map(result));
+    }
+
+    @DeleteMapping("/{id}/")
+    public ResponseEntity<Long> delete(@PathVariable(value = "id") Long id, @RequestBody CampaignJSON json) throws SQLException {
+        logger.debug("Received request to delete Campaign with id: " + id);
         try {
             service.delete(CampaignJSON.mapJson(json));
         } catch (Exception e) {
