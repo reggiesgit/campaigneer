@@ -1,6 +1,9 @@
 package com.ufpr.campaigneer.dao;
 
-import com.ufpr.campaigneer.model.*;
+import com.ufpr.campaigneer.model.Address;
+import com.ufpr.campaigneer.model.AddressCity;
+import com.ufpr.campaigneer.model.AddressCountry;
+import com.ufpr.campaigneer.model.AddressState;
 import com.ufpr.campaigneer.utils.HibernateUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;

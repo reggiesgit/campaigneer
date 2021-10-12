@@ -17,12 +17,14 @@ public class CampaignViolations {
     private boolean purchaseDateViolation;
     private boolean traderViolation;
     private boolean localeViolation;
+    private boolean invoiceViolation;
 
-    public CampaignViolations(boolean productViolation, boolean purchaseDateViolation, boolean traderViolation, boolean localeViolation) {
+    public CampaignViolations(boolean productViolation, boolean purchaseDateViolation, boolean traderViolation, boolean localeViolation, boolean invoiceViolation) {
         this.productViolation = productViolation;
         this.purchaseDateViolation = purchaseDateViolation;
         this.traderViolation = traderViolation;
         this.localeViolation = localeViolation;
+        this.invoiceViolation = invoiceViolation;
     }
 
     public CampaignViolations() {
@@ -41,6 +43,9 @@ public class CampaignViolations {
         }
         if (campaignViolations.isLocaleViolation()) {
             violations.add(ViolationType.LOCALE_VIOLATION);
+        }
+        if (campaignViolations.isInvoiceViolation()) {
+            violations.add(ViolationType.INVOICE_VIOLATION);
         }
         return violations;
     }
@@ -75,5 +80,13 @@ public class CampaignViolations {
 
     public void setLocaleViolation(boolean localeViolation) {
         this.localeViolation = localeViolation;
+    }
+
+    public boolean isInvoiceViolation() {
+        return invoiceViolation;
+    }
+
+    public void setInvoiceViolation(boolean invoiceViolation) {
+        this.invoiceViolation = invoiceViolation;
     }
 }

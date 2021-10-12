@@ -1,6 +1,8 @@
 package com.ufpr.campaigneer.model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)

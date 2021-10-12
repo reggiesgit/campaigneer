@@ -6,12 +6,11 @@ import com.ufpr.campaigneer.enums.CampaignStatus;
 import com.ufpr.campaigneer.enums.ViolationType;
 import com.ufpr.campaigneer.model.*;
 import com.ufpr.campaigneer.service.ParticipationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.ws.rs.NotFoundException;
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,6 +31,7 @@ public class ParticipationComponent implements ParticipationService {
     CampaignComponent campaignComponent = new CampaignComponent();
     ProductComponent productComponent = new ProductComponent();
     AddressComponent addressComponent = new AddressComponent();
+    DataCorrectionComponent correctionComponent = new DataCorrectionComponent();
 
     private static final String INVOICE_FOLDER = "/invoices/";
 
@@ -122,13 +122,18 @@ public class ParticipationComponent implements ParticipationService {
             part.setCampaignStatus(CampaignStatus.VALID);
             return update(part).orElseThrow();
         } else {
-            setupCorrection(part, violations);
+            correctionComponent.setupCorrection(part, violations);
             return part;
         }
     }
 
-    private void setupCorrection(Participation part, Set<ViolationType> violations) {
+    @Override
+    public Optional<Participation> correctData(Participation participation) {
+        Participation result = update(participation).orElseThrow();
+        correctionComponent.makeInvalid(result.getId());
+        return Optional.ofNullable(result);
     }
+
 
     public Participation resolveCampaing(Participation part) {
         Campaign triggered = campaignComponent.trigger(part).orElse(null);

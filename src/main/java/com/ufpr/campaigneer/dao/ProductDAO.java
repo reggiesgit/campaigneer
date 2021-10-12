@@ -4,8 +4,6 @@ import com.ufpr.campaigneer.model.Product;
 import com.ufpr.campaigneer.utils.HibernateUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 
 import java.sql.Timestamp;
 import java.util.Date;

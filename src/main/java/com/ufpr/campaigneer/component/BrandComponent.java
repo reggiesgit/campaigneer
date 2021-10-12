@@ -1,13 +1,11 @@
 package com.ufpr.campaigneer.component;
 
-import com.ufpr.campaigneer.dao.AddressDAO;
 import com.ufpr.campaigneer.dao.BrandDAO;
 import com.ufpr.campaigneer.model.Address;
 import com.ufpr.campaigneer.model.Brand;
 import com.ufpr.campaigneer.service.BrandService;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.Optional;
 
 /**

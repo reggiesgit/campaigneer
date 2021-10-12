@@ -3,6 +3,7 @@ package com.ufpr.campaigneer.controller;
 import com.ufpr.campaigneer.json.ParticipationJSON;
 import com.ufpr.campaigneer.json.VerificationJSON;
 import com.ufpr.campaigneer.model.Participation;
+import com.ufpr.campaigneer.service.DataCorrectionService;
 import com.ufpr.campaigneer.service.ParticipationService;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -30,6 +31,10 @@ public class ParticipationController {
     @Autowired
     @Qualifier("participationComponent")
     private ParticipationService service;
+
+    @Autowired
+    @Qualifier("dataCorrectionComponent")
+    private DataCorrectionService correctionService;
 
     @PostMapping("/")
     public ResponseEntity<ParticipationJSON> create(@RequestBody ParticipationJSON json) {
@@ -67,6 +72,15 @@ public class ParticipationController {
         logger.debug("Received evaluation for Participation with id: " + id);
         service.uptadeVerification(id, VerificationJSON.map(json));
         Participation result = service.reprocess(id);
+        return ResponseEntity.ok(ParticipationJSON.map(result));
+    }
+
+    @PutMapping("/{validationCode}")
+    public ResponseEntity<ParticipationJSON> dataCorrection(@PathVariable(value = "validationCode") String uuid, @RequestBody ParticipationJSON json) {
+        logger.debug("Received correction for Participation with anonymous code: " + uuid);
+        Long flagged = correctionService.findByValidationCode(uuid);
+        service.correctData(ParticipationJSON.mapJson(json)).orElseThrow();
+        Participation result = service.reprocess(flagged);
         return ResponseEntity.ok(ParticipationJSON.map(result));
     }
 }

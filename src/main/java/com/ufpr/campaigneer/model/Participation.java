@@ -1,13 +1,11 @@
 package com.ufpr.campaigneer.model;
 
 import com.ufpr.campaigneer.enums.CampaignStatus;
-import org.apache.tomcat.jni.Local;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Set;
 
 /**

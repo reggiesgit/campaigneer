@@ -5,7 +5,6 @@ import com.ufpr.campaigneer.model.Address;
 import com.ufpr.campaigneer.model.Campaign;
 import com.ufpr.campaigneer.model.Participation;
 import com.ufpr.campaigneer.model.Product;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Set;

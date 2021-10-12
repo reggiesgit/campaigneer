@@ -1,14 +1,10 @@
 package com.ufpr.campaigneer.dao;
 
-import com.ufpr.campaigneer.enums.AddressType;
-import com.ufpr.campaigneer.model.AddressCountry;
 import com.ufpr.campaigneer.model.Brand;
 import com.ufpr.campaigneer.utils.HibernateUtils;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 

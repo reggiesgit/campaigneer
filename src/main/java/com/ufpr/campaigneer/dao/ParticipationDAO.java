@@ -1,12 +1,10 @@
 package com.ufpr.campaigneer.dao;
 
-import com.ufpr.campaigneer.model.Campaign;
 import com.ufpr.campaigneer.model.Participation;
 import com.ufpr.campaigneer.utils.HibernateUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
-import javax.servlet.http.Part;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;

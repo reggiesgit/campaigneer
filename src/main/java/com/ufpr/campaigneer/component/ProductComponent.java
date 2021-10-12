@@ -6,7 +6,10 @@ import com.ufpr.campaigneer.service.ProductService;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.NotFoundException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)

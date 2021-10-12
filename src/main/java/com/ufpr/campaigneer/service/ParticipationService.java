@@ -29,4 +29,6 @@ public interface ParticipationService {
     Participation reprocess(Long id);
 
     Participation uptadeVerification(Long id, CampaignViolations violations);
+
+    Optional<Participation> correctData(Participation mapJson);
 }

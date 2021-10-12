@@ -2,8 +2,6 @@ package com.ufpr.campaigneer.json;
 
 import com.ufpr.campaigneer.model.AddressCity;
 
-import javax.ws.rs.NotFoundException;
-
 /**
  * Created by Regis Gaboardi (@gmail.com)
  * Provided with Love and IntelliJ IDEA for campaigneer.
