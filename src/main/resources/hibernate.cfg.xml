@@ -28,5 +28,6 @@
         <mapping class="com.ufpr.campaigneer.model.Product"/>
         <mapping class="com.ufpr.campaigneer.model.Campaign"/>
         <mapping class="com.ufpr.campaigneer.model.Participation"/>
+        <mapping class="com.ufpr.campaigneer.model.DataCorrection"/>
     </session-factory>
 </hibernate-configuration>

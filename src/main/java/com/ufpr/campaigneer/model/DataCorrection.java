@@ -16,7 +16,7 @@ public class DataCorrection extends BasicModel {
     private String code;
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "participation_id", foreignKey = @ForeignKey(name ="participation_fk"))
+    @JoinColumn(name = "participation_id", foreignKey = @ForeignKey(name ="correction_participation_fk"))
     private Participation participation;
     private boolean isValid;
 

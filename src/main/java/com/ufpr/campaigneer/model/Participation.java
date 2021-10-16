@@ -29,7 +29,7 @@ public class Participation extends BasicModel {
     @ManyToMany(targetEntity = Address.class, cascade = CascadeType.ALL,
             fetch = FetchType.EAGER)
     @JoinTable(name="participation_address",
-            joinColumns = { @JoinColumn(name = "participation_id", foreignKey = @ForeignKey(name ="participation_fk")) },
+            joinColumns = { @JoinColumn(name = "participation_id", foreignKey = @ForeignKey(name ="address_participation_fk")) },
             inverseJoinColumns = { @JoinColumn(name = "address_id", foreignKey = @ForeignKey(name ="participation_address_fk")) })
     private Set<Address> addresses;
     @ManyToMany(targetEntity = Product.class,

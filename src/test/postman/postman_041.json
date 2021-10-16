@@ -1,0 +1,482 @@
+{
+	"info": {
+		"_postman_id": "415870a0-2203-4695-b624-ef3c29406b8c",
+		"name": "Campaigneer",
+		"description": "This is a Collection of RESTFul requests targeted at the Campaigneer Application Server.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Address",
+			"item": [
+				{
+					"name": "Create Country",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify that has ID\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.be.not.null;\r",
+									"})\r",
+									"pm.test(\"Verify that has Code\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.be.not.null;\r",
+									"})\r",
+									"pm.test(\"Set Country variables\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).be.not.null;\r",
+									"    pm.environment.set(\"countryCode\", jsonData.code);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Brasil\",\r\n    \"code\":\"BR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/campaigneer/address/createCountry",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"campaigneer",
+								"address",
+								"createCountry"
+							]
+						},
+						"description": "This request create a default AddressCountry which is intended to be a simple test API request"
+					},
+					"response": []
+				},
+				{
+					"name": "Create State",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify that has ID\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.be.not.null;\r",
+									"})\r",
+									"pm.test(\"Set State variables\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).be.not.null;\r",
+									"    pm.environment.set(\"lastStateCode\", jsonData.code);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Parana\",\r\n    \"code\":\"PR\",\r\n    \"countryJSON\": {\r\n        \"code\": \"{{countryCode}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/campaigneer/address/createState",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"campaigneer",
+								"address",
+								"createState"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create City",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify that has ID\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.be.not.null;\r",
+									"})\r",
+									"pm.test(\"Set City variables\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).be.not.null;\r",
+									"    pm.environment.set(\"cityName\", jsonData.name);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Curitiba\",\r\n    \"stateJSON\": {\r\n        \"code\":\"{{lastStateCode}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/campaigneer/address/createCity",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"campaigneer",
+								"address",
+								"createCity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify that has ID\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.be.not.null;\r",
+									"})\r",
+									"pm.test(\"Set Country variables\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).be.not.null;\r",
+									"    pm.environment.set(\"lastCreatedAddress\", jsonData.id);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"streetName\": \"Dr. Alcides Arvocerde\",\r\n    \"streetNumber\": \"1225\",\r\n    \"complement\": \"SEPT\",\r\n    \"postalCode\": \"88088-888\",\r\n    \"addressType\": \"1\",\r\n    \"cityJSON\": {\r\n       \"name\":\"{{cityName}}\",\r\n        \"stateJSON\": {\r\n            \"code\": \"{{lastStateCode}}\"\r\n        }\r\n   }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/campaigneer/address/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"campaigneer",
+								"address",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "This folder contains all the Address requests."
+		},
+		{
+			"name": "Brand",
+			"item": [
+				{
+					"name": "Create Brand",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify that has ID\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.be.not.null;\r",
+									"})\r",
+									"pm.test(\"Set Brand variables\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).be.not.null;\r",
+									"    pm.environment.set(\"ufprBrandName\", jsonData.name);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"UFPR\",\r\n    \"addresses\":\r\n    [\r\n        {\r\n            \"streetName\": \"Dr. Alcides Arvocerde\",\r\n            \"streetNumber\": \"1225\",\r\n            \"complement\": \"SEPT\",\r\n            \"postalCode\": \"88088-888\",\r\n            \"addressType\": \"1\",\r\n            \"cityJSON\": {\r\n            \"name\":\"{{cityName}}\",\r\n                \"stateJSON\": {\r\n                    \"code\": \"{{lastStateCode}}\"\r\n                }\r\n            }\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/campaigneer/brand/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"campaigneer",
+								"brand",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Create Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify that has ID\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.be.not.null;\r",
+									"})\r",
+									"pm.test(\"Verify that has ID\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.environment.set(\"productEan\", jsonData.ean);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"TADS\",\r\n    \"ean\": \"UFPRSEPTTADS\",\r\n    \"classOfGood\": \"3\",\r\n    \"manufacturer\": {\r\n        \"name\": \"{{ufprBrandName}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/campaigneer/product/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"campaigneer",
+								"product",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Campaign",
+			"item": [
+				{
+					"name": "Create Campaign",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify that has ID\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.be.not.null;\r",
+									"})\r",
+									"pm.test(\"Set Campaign variables\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).be.not.null;\r",
+									"    pm.environment.set(\"campaignCode\", jsonData.code);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Engenharia de Software\",\r\n    \"code\": \"2020_ENG_SOFTWARE\",\r\n    \"promoter\": {\r\n        \"name\": \"{{ufprBrandName}}\"\r\n    },\r\n    \"purchaseFrom\": \"2020-01-01\",\r\n    \"purchaseUntil\": \"2020-12-31\",\r\n    \"validFrom\": \"2020-01-01\",\r\n    \"validUntil\": \"2021-12-31\",\r\n    \"campaignType\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/campaigneer/campaign/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"campaigneer",
+								"campaign",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Campaign",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify that has ID\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.be.not.null;\r",
+									"})\r",
+									"pm.test(\"Verify that is updated\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.updated).to.be.not.null;\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n        \"name\": \"TADS\",\r\n        \"ean\": \"UFPRSEPTTADS\",\r\n        \"classOfGood\": \"3\",\r\n        \"manufacturer\": {\r\n            \"name\": \"{{ufprBrandName}}\"\r\n        }\r\n    }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/campaigneer/campaign/1/products/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"campaigneer",
+								"campaign",
+								"1",
+								"products",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Participation",
+			"item": [
+				{
+					"name": "Create Participation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify that has ID\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.be.not.null;\r",
+									"})\r",
+									"pm.test(\"Set Participation variables\", function() {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.email).be.not.null;\r",
+									"    pm.environment.set(\"participantEmail\", jsonData.email);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Regis\",\r\n    \"lastName\": \"Gaboardi\",\r\n    \"email\": \"regisgaboardi@gmail.com\",\r\n    \"contact\": \"988231331\",\r\n    \"invoiceDate\": \"2020-09-22\",\r\n    \"products\": [\r\n        {\r\n            \"ean\": \"{{productEan}}\"\r\n        }\r\n    ],\r\n    \"addresses\": [\r\n        {\r\n            \"postalCode\": \"88088-888\",\r\n            \"streetNumber\": \"1225\",\r\n            \"addressType\": \"0\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/campaigneer/participation/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"campaigneer",
+								"participation",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

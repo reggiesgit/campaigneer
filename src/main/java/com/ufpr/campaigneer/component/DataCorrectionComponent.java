@@ -5,6 +5,7 @@ import com.ufpr.campaigneer.enums.ViolationType;
 import com.ufpr.campaigneer.model.DataCorrection;
 import com.ufpr.campaigneer.model.Participation;
 import com.ufpr.campaigneer.service.DataCorrectionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.ForbiddenException;
@@ -22,7 +23,8 @@ import java.util.UUID;
 public class DataCorrectionComponent implements DataCorrectionService {
 
     DataCorrectionDAO dao = new DataCorrectionDAO();
-    ParticipationComponent participationComponent = new ParticipationComponent();
+    @Autowired
+    ParticipationComponent participationComponent; //= new ParticipationComponent();
 
     public void setupCorrection(Participation part, Set<ViolationType> violations) {
         DataCorrection correction = new DataCorrection();
