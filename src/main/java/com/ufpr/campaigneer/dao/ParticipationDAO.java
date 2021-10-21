@@ -1,5 +1,6 @@
 package com.ufpr.campaigneer.dao;
 
+import com.ufpr.campaigneer.enums.CampaignStatus;
 import com.ufpr.campaigneer.model.Participation;
 import com.ufpr.campaigneer.utils.HibernateUtils;
 import org.hibernate.Session;
@@ -121,4 +122,23 @@ public class ParticipationDAO {
         }
     }
 
+    public Participation findFromQueueByCampaign(Long campaignId) {
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            Query query = session
+                    .createQuery("from Participation part " +
+                            "where part.triggeredCampaign.id = :campaignId " +
+                            "and part.campaignStatus = :status " +
+                            "and part.deleted is null ");
+            query.setParameter("campaignId", campaignId);
+            query.setParameter("status", CampaignStatus.VALIDATION_QUEUE);
+            query.setMaxResults(1);
+            Participation result = (Participation) query.uniqueResult();
+            return result;
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
+    }
 }

@@ -32,6 +32,7 @@ public class ParticipationComponent implements ParticipationService {
     ProductComponent productComponent = new ProductComponent();
     AddressComponent addressComponent = new AddressComponent();
     DataCorrectionComponent correctionComponent = new DataCorrectionComponent();
+    EmailComponent emailComponent = new EmailComponent();
 
     private static final String INVOICE_FOLDER = "/invoices/";
 
@@ -92,27 +93,42 @@ public class ParticipationComponent implements ParticipationService {
     @Override
     public Participation reprocess(Long id) {
         Participation part = findById(id).orElseThrow(() -> new NotFoundException("Failed to reprocess Participation. Couldn't find Participation with id: " + id));
-        if (part.getTriggeredCampaign() == null) {
-            part = resolveCampaing(part);
-            if (part.getCampaignStatus().equals(CampaignStatus.NO_CAMPAIGN)) {
+        if (CampaignStatus.BAD_TRADER.ordinal() > part.getCampaignStatus().ordinal()) {
+            if (part.getTriggeredCampaign() == null) {
+                part = resolveCampaing(part);
+                if (part.getCampaignStatus().equals(CampaignStatus.NO_CAMPAIGN)) {
+                    return part;
+                }
+            }
+            part = resolveDuplicity(part);
+            if (part.getCampaignStatus().equals(CampaignStatus.DUPLICATED)) {
                 return part;
             }
-        }
-        part = resolveDuplicity(part);
-        if (part.getCampaignStatus().equals(CampaignStatus.DUPLICATED)) {
-            return part;
-        }
-        part = resolveParticipationDates(part);
-        if (part.getCampaignStatus().equals(CampaignStatus.BAD_REGISTRATION_DATE)
-            || part.getCampaignStatus().equals(CampaignStatus.BAD_PURCHASE_DATE)) {
-            return part;
-        }
-        //TODO: Add mechanic when locale and trader policies are defined.
-        // part = resolveLocale(part);
-        // part = resolveTrader(part);
+            part = resolveParticipationDates(part);
+            if (part.getCampaignStatus().equals(CampaignStatus.BAD_REGISTRATION_DATE)
+                    || part.getCampaignStatus().equals(CampaignStatus.BAD_PURCHASE_DATE)) {
+                return part;
+            }
+            //TODO: Add mechanic when locale and trader policies are defined.
+            // part = resolveLocale(part);
+            // part = resolveTrader(part);
 
-        return addToValidationQueue(part);
+            emailComponent.sendQueueStatusMail(part);
+            return addToValidationQueue(part);
+        }
+        if (CampaignStatus.VALID.equals(part.getCampaignStatus())) {
+            emailComponent.sendValidStatusMail(part);
+        }
+
+        return part;
     }
+
+    @Override
+    public Optional<Participation> retrieveFromCorrectionQueue(Long campaignId) {
+        Participation next = dao.findFromQueueByCampaign(campaignId);
+        return Optional.ofNullable(next);
+    }
+
 
     @Override
     public Participation uptadeVerification(Long id, CampaignViolations campaignViolations) {
