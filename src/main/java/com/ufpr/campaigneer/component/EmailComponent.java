@@ -68,7 +68,9 @@ public class EmailComponent {
         mailSender.setPort(587);
 
         mailSender.setUsername("regisandre@ufpr.br");
+
         mailSender.setPassword("properties");
+
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
