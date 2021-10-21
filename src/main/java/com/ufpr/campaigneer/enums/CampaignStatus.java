@@ -23,8 +23,8 @@ public enum CampaignStatus {
     PAID(12, "PAID"),
     CLOSED(13, "CLOSED");
 
-    private int chave;
-    private String valor;
+    private final int chave;
+    private final String valor;
 
     CampaignStatus(int chave, String valor) {
         this.chave = chave;

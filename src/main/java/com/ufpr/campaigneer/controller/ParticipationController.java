@@ -67,6 +67,13 @@ public class ParticipationController {
         return ResponseEntity.ok(ParticipationJSON.map(result));
     }
 
+    @GetMapping("/validationQueue/{id}")
+    public ResponseEntity<ParticipationJSON> getFromValidationQueue(@PathVariable(value = "id") Long campaignId) {
+        logger.debug("Retrieving the next Participation on Validation Queue for Campaign with id:" + campaignId);
+        Participation next = service.retrieveFromCorrectionQueue(campaignId).orElseThrow();
+        return ResponseEntity.ok(ParticipationJSON.map(next));
+    }
+
     @PutMapping("/{id}/evaluate")
     public ResponseEntity<ParticipationJSON> verify(@PathVariable(value = "id") Long id, @RequestBody VerificationJSON json) {
         logger.debug("Received evaluation for Participation with id: " + id);
@@ -83,4 +90,5 @@ public class ParticipationController {
         Participation result = service.reprocess(flagged);
         return ResponseEntity.ok(ParticipationJSON.map(result));
     }
+
 }

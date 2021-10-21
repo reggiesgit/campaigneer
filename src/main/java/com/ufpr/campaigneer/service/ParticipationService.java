@@ -28,6 +28,8 @@ public interface ParticipationService {
 
     Participation reprocess(Long id);
 
+    Optional<Participation> retrieveFromCorrectionQueue(Long campaignId);
+
     Participation uptadeVerification(Long id, CampaignViolations violations);
 
     Optional<Participation> correctData(Participation mapJson);
