@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -45,7 +46,6 @@ public class ParticipationComponent implements ParticipationService {
         participation.getProducts().clear();
         participation.getProducts().add(productEntity);
         Address address = addressComponent.findBillingAddress(participation.getAddresses());
-
         Address addressEntity = addressComponent.findByPostalCodeAndNumber(address.getPostalCode(), address.getStreetNumber())
                 .orElseThrow(() -> new NotFoundException("Failed to create Address for Participation. Insuficient data."));
         participation.getAddresses().clear();
@@ -86,41 +86,63 @@ public class ParticipationComponent implements ParticipationService {
         Path path = Paths.get(INVOICE_FOLDER + "invoice_" + part.getId());
         Files.write(path, imgBytes);
 
-//        part.setInvoice64(encode(invoice));
         return Optional.ofNullable(dao.update(part));
     }
 
     @Override
     public Participation reprocess(Long id) {
-        Participation part = findById(id).orElseThrow(() -> new NotFoundException("Failed to reprocess Participation. Couldn't find Participation with id: " + id));
-        if (CampaignStatus.BAD_TRADER.ordinal() > part.getCampaignStatus().ordinal()) {
-            if (part.getTriggeredCampaign() == null) {
-                part = resolveCampaing(part);
-                if (part.getCampaignStatus().equals(CampaignStatus.NO_CAMPAIGN)) {
-                    return part;
-                }
+        Participation part = findById(id)
+                .orElseThrow(() -> new NotFoundException("Failed to reprocess Participation. Couldn't find Participation with id: " + id));
+        if (part.getTriggeredCampaign() == null) {
+            part = resolveCampaing(part);
+            if (part.getCampaignStatus().equals(CampaignStatus.NO_CAMPAIGN)) {
+                emailComponent.sendNoCampaignMail(part);
+                return update(part).orElseThrow();
             }
-            part = resolveDuplicity(part);
-            if (part.getCampaignStatus().equals(CampaignStatus.DUPLICATED)) {
-                return part;
+        }
+        if (CampaignStatus.INVALID.ordinal() > part.getCampaignStatus().ordinal()) {
+            List<CampaignStatus> problems = new ArrayList<>();
+            if (null == part.getInvoicePath()) {
+                problems.add(CampaignStatus.BAD_INVOICE);
             }
-            part = resolveParticipationDates(part);
-            if (part.getCampaignStatus().equals(CampaignStatus.BAD_REGISTRATION_DATE)
-                    || part.getCampaignStatus().equals(CampaignStatus.BAD_PURCHASE_DATE)) {
-                return part;
-            }
+            resolveDuplicity(part, problems);
+            resolveParticipationDates(part, problems);
             //TODO: Add mechanic when locale and trader policies are defined.
             // part = resolveLocale(part);
             // part = resolveTrader(part);
 
-            emailComponent.sendQueueStatusMail(part);
-            return addToValidationQueue(part);
+            resolveBadStatus(part, problems);
+            if (!problems.isEmpty()) {
+                emailComponent.sendCorrectionStatusMail(part, resolveProblemString(problems), correctionComponent.setupCorrection(part));
+            } else {
+//                emailComponent.sendEnqueuedStatusMail(part);
+            }
+            return update(part).orElseThrow();
         }
         if (CampaignStatus.VALID.equals(part.getCampaignStatus())) {
             emailComponent.sendValidStatusMail(part);
+            return part;
         }
+        return addToValidationQueue(part);
 
-        return part;
+    }
+
+    private void resolveBadStatus(Participation part, List<CampaignStatus> problems) {
+        if (problems.contains(CampaignStatus.DUPLICATED)) {
+            part.setCampaignStatus(CampaignStatus.DUPLICATED);
+        } else if (problems.size() > 1) {
+            part.setCampaignStatus(CampaignStatus.INVALID);
+        } else if (!problems.isEmpty()) {
+            part.setCampaignStatus(problems.iterator().next());
+        } else {
+            part.setCampaignStatus(CampaignStatus.VALIDATION_QUEUE);
+        }
+    }
+
+    private String resolveProblemString(List<CampaignStatus> problems) {
+        StringBuffer result = new StringBuffer();
+        problems.forEach(each -> result.append(each.name() + "\n"));
+        return result.toString();
     }
 
     @Override
@@ -138,7 +160,7 @@ public class ParticipationComponent implements ParticipationService {
             part.setCampaignStatus(CampaignStatus.VALID);
             return update(part).orElseThrow();
         } else {
-            correctionComponent.setupCorrection(part, violations);
+            correctionComponent.setupCorrection(part);
             return part;
         }
     }
@@ -161,34 +183,25 @@ public class ParticipationComponent implements ParticipationService {
         return dao.update(part);
     }
 
-    public Participation resolveDuplicity(Participation part) {
+    public void resolveDuplicity(Participation part, List<CampaignStatus> problems) {
         List<Participation> single = dao.findTwinParticipations(part);
-        if (single.size()> 1) {
-            part.setCampaignStatus(CampaignStatus.DUPLICATED);
-            return dao.update(part);
+        if (single.size() > 1) {
+            problems.add(CampaignStatus.DUPLICATED);
         }
-        return part;
     }
 
-    private Participation resolveParticipationDates(Participation part) {
-        boolean changedStatus = false;
+    private void resolveParticipationDates(Participation part, List<CampaignStatus> problems) {
         Campaign triggered = part.getTriggeredCampaign();
         boolean afterStart = triggered.getValidFrom().isBefore(part.getCreated().toLocalDateTime().toLocalDate());
         boolean beforeEnd = triggered.getValidUntil().isAfter(part.getCreated().toLocalDateTime().toLocalDate());
         boolean afterPurchaseStart = triggered.getPurchaseFrom().isBefore(part.getInvoiceDate());
         boolean beforePurchaseEnd = triggered.getPurchaseFrom().isAfter(part.getInvoiceDate());
         if (!afterStart || !beforeEnd) {
-            part.setCampaignStatus(CampaignStatus.BAD_REGISTRATION_DATE);
-            changedStatus = true;
+            problems.add(CampaignStatus.BAD_REGISTRATION_DATE);
         }
         if (!afterPurchaseStart || beforePurchaseEnd) {
-            part.setCampaignStatus(CampaignStatus.BAD_PURCHASE_DATE);
-            changedStatus = true;
+            problems.add(CampaignStatus.BAD_PURCHASE_DATE);
         }
-        if (changedStatus) {
-            part = dao.update(part);
-        }
-        return part;
 
     }
     private Participation addToValidationQueue(Participation part) {
@@ -196,17 +209,4 @@ public class ParticipationComponent implements ParticipationService {
         return dao.update(part);
     }
 
-//    private String encode(MultipartFile invoice) throws IOException {
-//        byte[] fileContent = invoice.getBytes();
-//        return Base64.getEncoder().encodeToString(fileContent);
-//    }
-//
-//    private MultipartFile decode(String invoice64) throws IOException {
-//        byte[] data = Base64.getDecoder().decode(invoice64);
-//        try (OutputStream stream = new FileOutputStream("img/invoice.png")) {
-//            stream.write(data);
-//
-//        }
-//        return new CommonsMultipartFile(tempFile);
-//    }
 }

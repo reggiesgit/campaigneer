@@ -5,6 +5,7 @@ import com.ufpr.campaigneer.model.Address;
 import com.ufpr.campaigneer.model.Campaign;
 import com.ufpr.campaigneer.model.Participation;
 import com.ufpr.campaigneer.model.Product;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -27,9 +28,7 @@ public class ParticipationJSON {
     private Campaign triggeredCampaign;
     private CampaignStatus campaignStatus;
     private LocalDate invoiceDate;
-    private String invoice64;
-
-
+    private String invoice;
 
     public ParticipationJSON() {
     }
@@ -45,8 +44,8 @@ public class ParticipationJSON {
         result.setProducts(json.getProducts());
         result.setTriggeredCampaign(json.getTriggeredCampaign());
         result.setCampaignStatus(json.getCampaignStatus());
-        result.setInvoice64(json.getInvoice64());
         result.setInvoiceDate(json.getInvoiceDate());
+        result.setInvoicePath(json.getInvoice());
         return result;
     }
 
@@ -62,7 +61,7 @@ public class ParticipationJSON {
         json.setTriggeredCampaign(participation.getTriggeredCampaign());
         json.setCampaignStatus(participation.getCampaignStatus());
         json.setInvoiceDate(participation.getInvoiceDate());
-
+        json.setInvoice(participation.getInvoicePath());
         return json;
     }
 
@@ -146,11 +145,11 @@ public class ParticipationJSON {
         this.invoiceDate = invoiceDate;
     }
 
-    public String getInvoice64() {
-        return invoice64;
+    public String getInvoice() {
+        return invoice;
     }
 
-    public void setInvoice64(String invoice64) {
-        this.invoice64 = invoice64;
+    public void setInvoice(String invoice) {
+        this.invoice = invoice;
     }
 }

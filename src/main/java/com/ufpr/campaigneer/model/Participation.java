@@ -25,7 +25,7 @@ public class Participation extends BasicModel {
     @NotNull
     @ColumnDefault("0")
     private LocalDate invoiceDate;
-    private String invoice64;
+    private String invoicePath;
     @ManyToMany(targetEntity = Address.class, cascade = CascadeType.ALL,
             fetch = FetchType.EAGER)
     @JoinTable(name="participation_address",
@@ -46,13 +46,13 @@ public class Participation extends BasicModel {
     @ColumnDefault("0")
     private CampaignStatus campaignStatus;
 
-    public Participation(String name, String lastName, String email, String contact, LocalDate invoiceDate, String invoice64, Set<Address> addresses, Set<Product> products, Campaign triggeredCampaign) {
+    public Participation(String name, String lastName, String email, String contact, LocalDate invoiceDate, String invoicePath, Set<Address> addresses, Set<Product> products, Campaign triggeredCampaign) {
         this.name = name;
         this.lastName = lastName;
         this.email = email;
         this.contact = contact;
         this.invoiceDate = invoiceDate;
-        this.invoice64 = invoice64;
+        this.invoicePath = invoicePath;
         this.addresses = addresses;
         this.products = products;
         this.triggeredCampaign = triggeredCampaign;
@@ -101,12 +101,12 @@ public class Participation extends BasicModel {
         this.invoiceDate = invoiceDate;
     }
 
-    public String getInvoice64() {
-        return invoice64;
+    public String getInvoicePath() {
+        return invoicePath;
     }
 
-    public void setInvoice64(String invoice64) {
-        this.invoice64 = invoice64;
+    public void setInvoicePath(String invoicePath) {
+        this.invoicePath = invoicePath;
     }
 
     public Set<Address> getAddresses() {

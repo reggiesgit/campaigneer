@@ -4,6 +4,7 @@ import com.ufpr.campaigneer.json.ParticipationJSON;
 import com.ufpr.campaigneer.json.VerificationJSON;
 import com.ufpr.campaigneer.model.Participation;
 import com.ufpr.campaigneer.service.DataCorrectionService;
+import com.ufpr.campaigneer.service.InvoiceService;
 import com.ufpr.campaigneer.service.ParticipationService;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.ws.rs.Consumes;
 import java.io.IOException;
 
 /**
@@ -26,6 +28,7 @@ import java.io.IOException;
 @RequestMapping("/participation")
 public class ParticipationController {
 
+    private static final String UNDERSCORE = "_";
     Logger logger = LoggerFactory.getLogger(ParticipationController.class);
 
     @Autowired
@@ -35,6 +38,10 @@ public class ParticipationController {
     @Autowired
     @Qualifier("dataCorrectionComponent")
     private DataCorrectionService correctionService;
+
+    @Autowired
+    @Qualifier("invoiceComponent")
+    private InvoiceService invoiceService;
 
     @PostMapping("/")
     public ResponseEntity<ParticipationJSON> create(@RequestBody ParticipationJSON json) {
@@ -60,10 +67,12 @@ public class ParticipationController {
     }
 
     @PutMapping("/{id}/invoice")
+    @Consumes("multipart/form-data")
     public ResponseEntity<ParticipationJSON> uploadInvoice(@PathVariable(value = "id") Long id, @RequestParam MultipartFile invoice) throws NotFoundException, IOException {
         logger.debug("Received request to update Participation with id: " + id);
-        Participation result = service.uploadInvoice(id, invoice)
-                .orElseThrow(() -> new NotFoundException("No Participation found for client: " + id));
+        Participation part = service.findById(id).orElseThrow();
+        part.setInvoicePath(invoiceService.resolveAndSave(part, invoice));
+        Participation result = service.update(part).orElseThrow();
         return ResponseEntity.ok(ParticipationJSON.map(result));
     }
 

@@ -26,11 +26,13 @@ public class DataCorrectionComponent implements DataCorrectionService {
     @Autowired
     ParticipationComponent participationComponent; //= new ParticipationComponent();
 
-    public void setupCorrection(Participation part, Set<ViolationType> violations) {
+    public String setupCorrection(Participation part) {
         DataCorrection correction = new DataCorrection();
         correction.setCode(UUID.randomUUID().toString());
         correction.setParticipation(part);
         correction.setValid(true);
+        DataCorrection created = dao.create(correction);
+        return created.getCode();
     }
 
     public boolean validateCode(String uuid) {

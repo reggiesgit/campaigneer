@@ -1,5 +1,6 @@
 package com.ufpr.campaigneer.component;
 
+import com.ufpr.campaigneer.enums.CampaignStatus;
 import com.ufpr.campaigneer.model.Participation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -26,7 +29,24 @@ public class EmailComponent {
     @Autowired
     private JavaMailSender emailSender;
 
-    public void sendQueueStatusMail(Participation participation) {
+    public void sendNoCampaignMail(Participation participation) {
+        emailSender = getJavaMailSender();
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setFrom("regisandre@ufpr.br");
+        mail.setTo(participation.getEmail());
+        mail.setSubject("Recebemos sua Participação!");
+        mail.setText("Prezado(a) " + participation.getName() + "\n\n" +
+                "Recebemos os dados da sua Participação, mas não identificamos nenhuma Campanha aplicável. \n" +
+                "Por favor, certifique-se que os dados informados estão de acordo com os Tremos da Campanha desejada.\n\n" +
+                "Cordialmente, o Campanheiro.");
+        try {
+            emailSender.send(mail);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendCorrectionStatusMail(Participation participation, String problems, String codigo) {
         emailSender = getJavaMailSender();
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setFrom("regisandre@ufpr.br");
@@ -34,7 +54,10 @@ public class EmailComponent {
         mail.setSubject("Recebemos sua Participação");
         mail.setText("Prezado(a) " + participation.getName() + "\n\n" +
                 "Recebemos sua Participação para a Campanha " + participation.getTriggeredCampaign().getName() +
-                " e ficamos felizes em informar que seus dados serão processados em breve. \n" +
+                " e verificamos algumas inconformidades que impedem que sua Participação receba o prêmio oferecido. \n" +
+                "Para que sua Participação seja avaliada novamente, por favor utilize o código informado para efetuar a correção dos seguintes dados: \n\n" +
+                problems + "\n\n" +
+                "Codigo da correção: " + codigo + "\n" +
                 "Cordialmente, o Campanheiro.");
         try {
             emailSender.send(mail);
@@ -61,16 +84,13 @@ public class EmailComponent {
         }
     }
 
-
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp-mail.outlook.com");
         mailSender.setPort(587);
 
         mailSender.setUsername("regisandre@ufpr.br");
-
-        mailSender.setPassword("properties");
-
+        mailSender.setPassword("v=YDHxT4UT8N");
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
