@@ -5,6 +5,7 @@ import org.jvnet.hk2.annotations.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
@@ -25,4 +26,6 @@ public interface InvoiceService {
 
     String triggerAndSave(Participation part, MultipartFile invoice);
     String resolveAndSave(Participation part, MultipartFile invoice);
+
+    void replaceFile(Participation flagged, MultipartFile invoice, String uuid) throws IOException;
 }

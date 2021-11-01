@@ -34,10 +34,28 @@ public class EmailComponent {
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setFrom("regisandre@ufpr.br");
         mail.setTo(participation.getEmail());
-        mail.setSubject("Recebemos sua Participação!");
+        mail.setSubject("Recebemos seus dados!");
         mail.setText("Prezado(a) " + participation.getName() + "\n\n" +
                 "Recebemos os dados da sua Participação, mas não identificamos nenhuma Campanha aplicável. \n" +
                 "Por favor, certifique-se que os dados informados estão de acordo com os Tremos da Campanha desejada.\n\n" +
+                "Cordialmente, o Campanheiro.");
+        try {
+            emailSender.send(mail);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendEnqueuedStatusMail(Participation participation) {
+        emailSender = getJavaMailSender();
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setFrom("regisandre@ufpr.br");
+        mail.setTo(participation.getEmail());
+        mail.setSubject("Sua Participação está na fila de verificação");
+        mail.setText("Prezado(a) " + participation.getName() + "\n\n" +
+                "Verificamos os dados de sua Participação para a Campanha " + participation.getTriggeredCampaign().getName() +
+                " e está tudo certo! \n" +
+                "Sua participação passará agora pela fase de audição da Nota Fiscal e logo enviaremos o seu prêmio. \n\n" +
                 "Cordialmente, o Campanheiro.");
         try {
             emailSender.send(mail);
@@ -51,7 +69,7 @@ public class EmailComponent {
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setFrom("regisandre@ufpr.br");
         mail.setTo(participation.getEmail());
-        mail.setSubject("Recebemos sua Participação");
+        mail.setSubject("Recebemos sua Participação!");
         mail.setText("Prezado(a) " + participation.getName() + "\n\n" +
                 "Recebemos sua Participação para a Campanha " + participation.getTriggeredCampaign().getName() +
                 " e verificamos algumas inconformidades que impedem que sua Participação receba o prêmio oferecido. \n" +
@@ -100,4 +118,5 @@ public class EmailComponent {
 
         return mailSender;
     }
+
 }

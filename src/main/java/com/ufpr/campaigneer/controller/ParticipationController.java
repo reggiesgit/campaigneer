@@ -47,8 +47,8 @@ public class ParticipationController {
     public ResponseEntity<ParticipationJSON> create(@RequestBody ParticipationJSON json) {
         logger.debug("Received request to create Participation for client: " + json.getEmail());
         Participation result = service.create(ParticipationJSON.mapJson(json)).orElse(null);
-        Participation processed = service.reprocess(result.getId());
-        return ResponseEntity.ok(ParticipationJSON.map(processed));
+//        Participation processed = service.reprocess(result.getId());
+        return ResponseEntity.ok(ParticipationJSON.map(result));
     }
 
     @PutMapping("/{id}/reprocess")
@@ -63,17 +63,18 @@ public class ParticipationController {
         logger.debug("Received request to update Participation for client: " + id);
         Participation result = service.update(ParticipationJSON.mapJson(json))
                 .orElseThrow(() -> new NotFoundException("No Participation found for client: " + id));
-        return ResponseEntity.ok(ParticipationJSON.map(result));
+        Participation processed = service.reprocess(result.getId());
+        return ResponseEntity.ok(ParticipationJSON.map(processed));
     }
 
     @PutMapping("/{id}/invoice")
-    @Consumes("multipart/form-data")
     public ResponseEntity<ParticipationJSON> uploadInvoice(@PathVariable(value = "id") Long id, @RequestParam MultipartFile invoice) throws NotFoundException, IOException {
         logger.debug("Received request to update Participation with id: " + id);
         Participation part = service.findById(id).orElseThrow();
-        part.setInvoicePath(invoiceService.resolveAndSave(part, invoice));
+        part.setInvoicePath(invoiceService.triggerAndSave(part, invoice));
         Participation result = service.update(part).orElseThrow();
-        return ResponseEntity.ok(ParticipationJSON.map(result));
+        Participation processed = service.reprocess(result.getId());
+        return ResponseEntity.ok(ParticipationJSON.map(processed));
     }
 
     @GetMapping("/validationQueue/{id}")
@@ -86,17 +87,26 @@ public class ParticipationController {
     @PutMapping("/{id}/evaluate")
     public ResponseEntity<ParticipationJSON> verify(@PathVariable(value = "id") Long id, @RequestBody VerificationJSON json) {
         logger.debug("Received evaluation for Participation with id: " + id);
-        service.uptadeVerification(id, VerificationJSON.map(json));
-        Participation result = service.reprocess(id);
+        Participation updated = service.uptadeVerification(id, VerificationJSON.map(json));
+        return ResponseEntity.ok(ParticipationJSON.map(updated));
+    }
+
+    @PutMapping("/data/{validationCode}/")
+    public ResponseEntity<ParticipationJSON> dataCorrection(@PathVariable(value = "validationCode") String uuid, @RequestBody ParticipationJSON json) {
+        logger.debug("Received correction for Participation with anonymous code: " + uuid);
+        Participation current = correctionService.findByValidationCode(uuid);
+        //figure out how to update only the data that is present in the Json
+        service.correctData(ParticipationJSON.mapJson(json), uuid).orElseThrow();
+        Participation result = service.reprocess(current.getId());
         return ResponseEntity.ok(ParticipationJSON.map(result));
     }
 
-    @PutMapping("/{validationCode}")
-    public ResponseEntity<ParticipationJSON> dataCorrection(@PathVariable(value = "validationCode") String uuid, @RequestBody ParticipationJSON json) {
-        logger.debug("Received correction for Participation with anonymous code: " + uuid);
-        Long flagged = correctionService.findByValidationCode(uuid);
-        service.correctData(ParticipationJSON.mapJson(json)).orElseThrow();
-        Participation result = service.reprocess(flagged);
+    @PutMapping("/invoice/{validationCode}/")
+    public ResponseEntity<ParticipationJSON> invoiceCorrection(@PathVariable(value = "validationCode") String uuid, @RequestParam MultipartFile invoice) throws IOException {
+        logger.debug("Received invoice correction for Participation with anonymous code: " + uuid);
+        Participation flagged = correctionService.findByValidationCode(uuid);
+        invoiceService.replaceFile(flagged, invoice, uuid);
+        Participation result = service.reprocess(flagged.getId());
         return ResponseEntity.ok(ParticipationJSON.map(result));
     }
 

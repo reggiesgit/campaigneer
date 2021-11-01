@@ -2,6 +2,7 @@ package com.ufpr.campaigneer.model;
 
 import com.ufpr.campaigneer.enums.CampaignStatus;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -14,7 +15,8 @@ import java.util.Set;
  * 12/07/2021
  */
 
-@Entity
+@Entity()
+@DynamicUpdate
 @Table(name = "participation")
 public class Participation extends BasicModel {
 
@@ -140,4 +142,5 @@ public class Participation extends BasicModel {
     public CampaignStatus getCampaignStatus() {
         return campaignStatus;
     }
+
 }

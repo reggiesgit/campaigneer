@@ -5,6 +5,7 @@ import com.ufpr.campaigneer.model.Participation;
 import com.ufpr.campaigneer.service.InvoiceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,8 @@ public class InvoiceComponent implements InvoiceService {
     private final Path root = Paths.get("src/main/resources/invoices");
     Logger logger = LoggerFactory.getLogger(InvoiceComponent.class);
 
-    ParticipationComponent participationComponent = new ParticipationComponent();
+    @Autowired
+    ParticipationComponent participationComponent; // = new ParticipationComponent();
 
     @Override
     public void init() {
@@ -76,6 +78,8 @@ public class InvoiceComponent implements InvoiceService {
             }
         } catch (MalformedURLException e) {
             throw new RuntimeException("Error: " + e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException("Error: " + e.getMessage());
         }
     }
 
@@ -102,7 +106,21 @@ public class InvoiceComponent implements InvoiceService {
 
     @Override
     public String resolveAndSave(Participation part, MultipartFile invoice) {
-        return resolveAndSave(part.getTriggeredCampaign().getCode(), part.getId(), invoice);
+        try {
+            return resolveAndSave(part.getTriggeredCampaign().getCode(), part.getId(), invoice);
+        } catch (NullPointerException npe) {
+            logger.debug("Participation doesn't triggered a campaign yet. Will try to trigger a campaign now");
+            participationComponent.resolveCampaing(part);
+            return resolveAndSave(part.getTriggeredCampaign().getCode(), part.getId(), invoice);
+        }
+    }
+
+    @Override
+    public void replaceFile(Participation flagged, MultipartFile invoice, String uuid) throws IOException {
+        Files.deleteIfExists(Paths.get(flagged.getInvoicePath()));
+        resolveAndSave(flagged, invoice);
+        DataCorrectionComponent correctionComponent = new DataCorrectionComponent();
+        correctionComponent.makeInvalid(uuid);
     }
 
     public String resolveAndSave(String prefix, Long id, MultipartFile invoice) {

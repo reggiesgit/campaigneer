@@ -6,14 +6,10 @@ import com.ufpr.campaigneer.enums.CampaignStatus;
 import com.ufpr.campaigneer.enums.ViolationType;
 import com.ufpr.campaigneer.model.*;
 import com.ufpr.campaigneer.service.ParticipationService;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.ws.rs.NotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,8 +30,7 @@ public class ParticipationComponent implements ParticipationService {
     AddressComponent addressComponent = new AddressComponent();
     DataCorrectionComponent correctionComponent = new DataCorrectionComponent();
     EmailComponent emailComponent = new EmailComponent();
-
-    private static final String INVOICE_FOLDER = "/invoices/";
+    InvoiceComponent invoiceComponent = new InvoiceComponent();
 
     @Override
     public Optional<Participation> create(Participation participation) {
@@ -79,17 +74,6 @@ public class ParticipationComponent implements ParticipationService {
     }
 
     @Override
-    public Optional<Participation> uploadInvoice(Long id, MultipartFile invoice) throws IOException {
-        Participation part = dao.findById(id);
-
-        byte[] imgBytes = invoice.getBytes();
-        Path path = Paths.get(INVOICE_FOLDER + "invoice_" + part.getId());
-        Files.write(path, imgBytes);
-
-        return Optional.ofNullable(dao.update(part));
-    }
-
-    @Override
     public Participation reprocess(Long id) {
         Participation part = findById(id)
                 .orElseThrow(() -> new NotFoundException("Failed to reprocess Participation. Couldn't find Participation with id: " + id));
@@ -102,20 +86,20 @@ public class ParticipationComponent implements ParticipationService {
         }
         if (CampaignStatus.INVALID.ordinal() > part.getCampaignStatus().ordinal()) {
             List<CampaignStatus> problems = new ArrayList<>();
-            if (null == part.getInvoicePath()) {
-                problems.add(CampaignStatus.BAD_INVOICE);
-            }
+            resolveInvoice(part, problems);
             resolveDuplicity(part, problems);
             resolveParticipationDates(part, problems);
             //TODO: Add mechanic when locale and trader policies are defined.
             // part = resolveLocale(part);
             // part = resolveTrader(part);
 
-            resolveBadStatus(part, problems);
             if (!problems.isEmpty()) {
-                emailComponent.sendCorrectionStatusMail(part, resolveProblemString(problems), correctionComponent.setupCorrection(part));
+                String correctionCode = correctionComponent.setupCorrection(part);
+                resolveBadStatus(part, problems);
+                emailComponent.sendCorrectionStatusMail(part, resolveProblemString(problems), correctionCode);
             } else {
-//                emailComponent.sendEnqueuedStatusMail(part);
+                addToValidationQueue(part);
+                emailComponent.sendEnqueuedStatusMail(part);
             }
             return update(part).orElseThrow();
         }
@@ -124,7 +108,18 @@ public class ParticipationComponent implements ParticipationService {
             return part;
         }
         return addToValidationQueue(part);
+    }
 
+    private void resolveInvoice(Participation part, List<CampaignStatus> problems) {
+        if (null == part.getInvoicePath()) {
+            problems.add(CampaignStatus.BAD_INVOICE);
+        } else {
+            String name = part.getInvoicePath().substring(28);
+            Resource found = invoiceComponent.load(name);
+            if (!found.exists()) {
+                problems.add(CampaignStatus.BAD_INVOICE);
+            }
+        }
     }
 
     private void resolveBadStatus(Participation part, List<CampaignStatus> problems) {
@@ -151,27 +146,26 @@ public class ParticipationComponent implements ParticipationService {
         return Optional.ofNullable(next);
     }
 
-
     @Override
     public Participation uptadeVerification(Long id, CampaignViolations campaignViolations) {
         Participation part = findById(id).orElseThrow(() -> new NotFoundException("Failed to reprocess Participation. Couldn't find Participation with id: " + id));
         Set<ViolationType> violations = CampaignViolations.fromAttributes(campaignViolations);
         if (violations.isEmpty()) {
             part.setCampaignStatus(CampaignStatus.VALID);
-            return update(part).orElseThrow();
         } else {
-            correctionComponent.setupCorrection(part);
-            return part;
+            String correctionCode = correctionComponent.setupCorrection(part);
+            List<CampaignStatus> problems = CampaignStatus.fromViolations(part, violations);
+            emailComponent.sendCorrectionStatusMail(part, resolveProblemString(problems), correctionCode);
         }
+        return update(part).orElseThrow();
     }
 
     @Override
-    public Optional<Participation> correctData(Participation participation) {
+    public Optional<Participation> correctData(Participation participation, String uuid) {
         Participation result = update(participation).orElseThrow();
-        correctionComponent.makeInvalid(result.getId());
+        correctionComponent.makeInvalid(uuid);
         return Optional.ofNullable(result);
     }
-
 
     public Participation resolveCampaing(Participation part) {
         Campaign triggered = campaignComponent.trigger(part).orElse(null);
@@ -208,5 +202,4 @@ public class ParticipationComponent implements ParticipationService {
         part.setCampaignStatus(CampaignStatus.VALIDATION_QUEUE);
         return dao.update(part);
     }
-
 }
