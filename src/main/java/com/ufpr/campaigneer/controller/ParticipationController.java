@@ -94,10 +94,9 @@ public class ParticipationController {
     @PutMapping("/data/{validationCode}/")
     public ResponseEntity<ParticipationJSON> dataCorrection(@PathVariable(value = "validationCode") String uuid, @RequestBody ParticipationJSON json) {
         logger.debug("Received correction for Participation with anonymous code: " + uuid);
-        Participation current = correctionService.findByValidationCode(uuid);
-        //figure out how to update only the data that is present in the Json
-        service.correctData(ParticipationJSON.mapJson(json), uuid).orElseThrow();
-        Participation result = service.reprocess(current.getId());
+        Participation corrected = ParticipationJSON.replace(correctionService.findByValidationCode(uuid), json);
+        service.correctData(corrected, uuid).orElseThrow();
+        Participation result = service.reprocess(corrected.getId());
         return ResponseEntity.ok(ParticipationJSON.map(result));
     }
 

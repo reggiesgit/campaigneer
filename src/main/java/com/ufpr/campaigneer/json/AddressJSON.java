@@ -74,6 +74,20 @@ public class AddressJSON {
         return result;
     }
 
+    public static Set<Address> replace(Set<AddressJSON> json) {
+        Set<Address> result = new HashSet<>();
+        json.forEach(each -> {
+            Address replaced = new Address();
+            if (each.getAddressType() != null ) replaced.setAddressType(each.getAddressType());
+            if (each.getPostalCode() != null) replaced.setPostalCode(each.getPostalCode());
+            if (each.getStreetName() != null) replaced.setStreetName(each.getStreetName());
+            if (each.getStreetNumber() > 0) replaced.setStreetNumber(each.getStreetNumber());
+            if (each.getComplement() != null) replaced.setComplement(each.getComplement());
+            if (each.getCityJSON() != null) replaced.setCity(AddressCityJSON.replace(each.getCityJSON()));
+        });
+        return result;
+    }
+
     public Long getId() {
         return id;
     }

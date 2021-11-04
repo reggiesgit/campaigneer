@@ -56,7 +56,7 @@ public class ProductComponent implements ProductService {
         return Optional.ofNullable(dao.findById(id));
     }
 
-    public Set<Product> getProductEntities(List<Product> products) {
+    public Set<Product> getProductEntities(Set<Product> products) {
         Set<Product> found = new HashSet<>();
         products.forEach(each -> {
             found.add(findByEAN(each.getEan())

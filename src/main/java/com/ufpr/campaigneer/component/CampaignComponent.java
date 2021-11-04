@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -53,7 +54,7 @@ public class CampaignComponent implements CampaignService {
     }
 
     @Override
-    public Optional<Campaign> updateProducts(Long id, List<Product> products) {
+    public Optional<Campaign> updateProducts(Long id, Set<Product> products) {
         Campaign campaign = findByid(id).orElseThrow(() -> new NotFoundException("Failed to update Products. Couldn't find Campaign with id: " + id));
         campaign.getParticipatingProducts().addAll(productComponent.getProductEntities(products));
         return Optional.ofNullable(dao.update(campaign));

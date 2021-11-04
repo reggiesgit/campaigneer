@@ -7,6 +7,7 @@ import org.jvnet.hk2.annotations.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -24,6 +25,6 @@ public interface CampaignService {
     Optional<Campaign> findByid(Long id);
     Optional<Campaign> findByCode(String code);
 
-    Optional<Campaign> updateProducts(Long id, List<Product> products);
+    Optional<Campaign> updateProducts(Long id, Set<Product> products);
     Optional<Campaign> updateLocations(List<Address> locations);
 }

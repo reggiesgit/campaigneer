@@ -4,8 +4,6 @@ import com.ufpr.campaigneer.enums.CampaignStatus;
 import com.ufpr.campaigneer.model.Address;
 import com.ufpr.campaigneer.model.Campaign;
 import com.ufpr.campaigneer.model.Participation;
-import com.ufpr.campaigneer.model.Product;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -23,8 +21,8 @@ public class ParticipationJSON {
     private String lastName;
     private String email;
     private String contact;
-    private Set<Address> addresses;
-    private Set<Product> products;
+    private Set<AddressJSON> addresses;
+    private Set<ProductJSON> products;
     private Campaign triggeredCampaign;
     private CampaignStatus campaignStatus;
     private LocalDate invoiceDate;
@@ -40,8 +38,8 @@ public class ParticipationJSON {
         result.setLastName(json.getLastName());
         result.setEmail(json.getEmail());
         result.setContact(json.getContact());
-        result.setAddresses(json.getAddresses());
-        result.setProducts(json.getProducts());
+        result.setAddresses(AddressJSON.mapJson(json.getAddresses()));
+        result.setProducts(ProductJSON.mapJson(json.getProducts()));
         result.setTriggeredCampaign(json.getTriggeredCampaign());
         result.setCampaignStatus(json.getCampaignStatus());
         result.setInvoiceDate(json.getInvoiceDate());
@@ -56,13 +54,25 @@ public class ParticipationJSON {
         json.setLastName(participation.getLastName());
         json.setEmail(participation.getEmail());
         json.setContact(participation.getContact());
-        json.setAddresses(participation.getAddresses());
-        json.setProducts(participation.getProducts());
+        json.setAddresses(AddressJSON.map(participation.getAddresses()));
+        json.setProducts(ProductJSON.map(participation.getProducts()));
         json.setTriggeredCampaign(participation.getTriggeredCampaign());
         json.setCampaignStatus(participation.getCampaignStatus());
         json.setInvoiceDate(participation.getInvoiceDate());
         json.setInvoice(participation.getInvoicePath());
         return json;
+    }
+
+    public static Participation replace(Participation entity, ParticipationJSON json) {
+        if (json.getName() != null) entity.setName(json.getName());
+        if (json.getLastName() != null) entity.setLastName(json.getLastName());
+        if (json.getEmail() != null) entity.setEmail(json.getEmail());
+        if (json.getContact() != null) entity.setContact(json.getContact());
+        if (json.getAddresses() != null) entity.setAddresses(AddressJSON.replace(json.getAddresses()));
+        if (json.getProducts() != null) entity.setProducts(ProductJSON.replace(json.getProducts()));
+        if (json.getTriggeredCampaign() != null) entity.setTriggeredCampaign(json.getTriggeredCampaign());
+        if (json.getInvoiceDate() != null) entity.setInvoiceDate(json.getInvoiceDate());
+        return entity;
     }
 
     public Long getId() {
@@ -105,19 +115,19 @@ public class ParticipationJSON {
         this.contact = contact;
     }
 
-    public Set<Address> getAddresses() {
+    public Set<AddressJSON> getAddresses() {
         return addresses;
     }
 
-    public void setAddresses(Set<Address> addresses) {
+    public void setAddresses(Set<AddressJSON> addresses) {
         this.addresses = addresses;
     }
 
-    public Set<Product> getProducts() {
+    public Set<ProductJSON> getProducts() {
         return products;
     }
 
-    public void setProducts(Set<Product> products) {
+    public void setProducts(Set<ProductJSON> products) {
         this.products = products;
     }
 

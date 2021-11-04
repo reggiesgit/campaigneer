@@ -44,6 +44,14 @@ public class AddressStateJSON {
         return json;
     }
 
+    public static AddressState replace(AddressStateJSON json) {
+        AddressState result = new AddressState();
+        if (json.getCountryJSON() != null) result.setCode(json.getCode());
+        if (json.getName() != null ) result.setName(json.getName());
+        if (json.getCountryJSON() != null) result.setCountry(AddressCountryJSON.replace(json.getCountryJSON()));
+        return result;
+    }
+
     public Long getId() {
         return id;
     }

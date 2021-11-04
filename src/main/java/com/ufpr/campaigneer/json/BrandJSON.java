@@ -50,7 +50,7 @@ public class BrandJSON {
         return result;
     }
 
-    public static Set<Brand> mapJSon(Set<BrandJSON> jsonSet) {
+    public static Set<Brand> mapJson(Set<BrandJSON> jsonSet) {
         Set<Brand> result = new HashSet<>();
         jsonSet.forEach(each -> {
             result.add(BrandJSON.mapJson(each));
