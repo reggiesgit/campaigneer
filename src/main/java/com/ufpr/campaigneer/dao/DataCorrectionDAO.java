@@ -7,6 +7,7 @@ import org.hibernate.query.Query;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -69,10 +70,29 @@ public class DataCorrectionDAO {
             Query query = session
                     .createQuery("from DataCorrection correction " +
                             "where correction.participation.id = :participation " +
+                            "and correction.isValid = :true " +
                             "and correction.deleted is null");
             query.setParameter("participation", participationId);
+            query.setParameter("true", true);
             query.setMaxResults(1);
             DataCorrection result = (DataCorrection) query.uniqueResult();
+            return result;
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
+    }
+
+    public List<DataCorrection> findCorrectionAttempts(Long participationId) {
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            Query query = session
+                    .createQuery("from DataCorrection correction " +
+                            "where correction.participation.id = :participation " +
+                            "and correction.deleted is null");
+            query.setParameter("participation", participationId);
+            List<DataCorrection> result = query.getResultList();
             return result;
         } finally {
             session.getTransaction().commit();

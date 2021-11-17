@@ -15,13 +15,15 @@ public class CampaignViolations {
 
     private boolean productViolation;
     private boolean purchaseDateViolation;
+    private boolean registrationDateViolation;
     private boolean traderViolation;
     private boolean localeViolation;
     private boolean invoiceViolation;
 
-    public CampaignViolations(boolean productViolation, boolean purchaseDateViolation, boolean traderViolation, boolean localeViolation, boolean invoiceViolation) {
+    public CampaignViolations(boolean productViolation, boolean purchaseDateViolation, boolean registrationDateViolation, boolean traderViolation, boolean localeViolation, boolean invoiceViolation) {
         this.productViolation = productViolation;
         this.purchaseDateViolation = purchaseDateViolation;
+        this.registrationDateViolation = registrationDateViolation;
         this.traderViolation = traderViolation;
         this.localeViolation = localeViolation;
         this.invoiceViolation = invoiceViolation;
@@ -37,6 +39,9 @@ public class CampaignViolations {
         }
         if (campaignViolations.isPurchaseDateViolation()) {
             violations.add(ViolationType.PURCHASE_VIOLATION);
+        }
+        if (campaignViolations.isRegistrationDateViolation()) {
+            violations.add(ViolationType.REGISTRATION_VIOLATION);
         }
         if (campaignViolations.isTraderViolation()) {
             violations.add(ViolationType.TRADER_VIOLATION);
@@ -64,6 +69,14 @@ public class CampaignViolations {
 
     public void setPurchaseDateViolation(boolean purchaseDateViolation) {
         this.purchaseDateViolation = purchaseDateViolation;
+    }
+
+    public boolean isRegistrationDateViolation() {
+        return registrationDateViolation;
+    }
+
+    public void setRegistrationDateViolation(boolean registrationDateViolation) {
+        this.registrationDateViolation = registrationDateViolation;
     }
 
     public boolean isTraderViolation() {

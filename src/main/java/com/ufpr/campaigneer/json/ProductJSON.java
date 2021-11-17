@@ -5,7 +5,9 @@ import com.ufpr.campaigneer.model.Brand;
 import com.ufpr.campaigneer.model.Product;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -19,9 +21,9 @@ public class ProductJSON {
     private String name;
     private String ean;
     private ClassOfGood classOfGood;
-    private Brand manufacturer;
+    private BrandJSON manufacturer;
 
-    public ProductJSON(Long id, String name, String ean, ClassOfGood classOfGood, Brand manufacturer) {
+    public ProductJSON(Long id, String name, String ean, ClassOfGood classOfGood, BrandJSON manufacturer) {
         this.id = id;
         this.name = name;
         this.ean = ean;
@@ -38,7 +40,7 @@ public class ProductJSON {
         result.setName(json.getName());
         result.setClassOfGood(json.getClassOfGood());
         result.setEan(json.getEan());
-        result.setManufacturer(json.getManufacturer());
+        result.setManufacturer(BrandJSON.mapJson(json.getManufacturer()));
         return result;
     }
 
@@ -46,16 +48,37 @@ public class ProductJSON {
         ProductJSON result = new ProductJSON();
         result.setId(product.getId());
         result.setName(product.getName());
-        result.setManufacturer(product.getManufacturer());
+        result.setManufacturer(BrandJSON.map(product.getManufacturer()));
         result.setClassOfGood(product.getClassOfGood());
         result.setEan(product.getEan());
         return result;
     }
 
-    public static List<Product> mapJson(List<ProductJSON> json) {
-        List<Product> result = new ArrayList<>();
+    public static Set<Product> mapJson(Set<ProductJSON> json) {
+        Set<Product> result = new HashSet<>();
         json.forEach(each -> {
             result.add(mapJson(each));
+        });
+        return result;
+    }
+
+    public static Set<ProductJSON> map(Set<Product> products) {
+        Set<ProductJSON> result = new HashSet<>();
+        products.forEach(each -> {
+            result.add(map(each));
+        });
+        return result;
+    }
+
+    public static Set<Product> replace(Set<ProductJSON> products) {
+        Set<Product> result = new HashSet<>();
+        products.forEach(each -> {
+            Product replaced = new Product();
+            if (each.getName() != null)  replaced.setName(each.getName());
+            if (each.getEan() != null) replaced.setEan(each.getEan());
+            if (each.getClassOfGood() != null) replaced.setClassOfGood(each.getClassOfGood());
+            if (each.getManufacturer() != null) replaced.setManufacturer(BrandJSON.mapJson(each.getManufacturer()));
+            result.add(replaced);
         });
         return result;
     }
@@ -92,11 +115,11 @@ public class ProductJSON {
         this.classOfGood = classOfGood;
     }
 
-    public Brand getManufacturer() {
+    public BrandJSON getManufacturer() {
         return manufacturer;
     }
 
-    public void setManufacturer(Brand manufacturer) {
+    public void setManufacturer(BrandJSON manufacturer) {
         this.manufacturer = manufacturer;
     }
 }

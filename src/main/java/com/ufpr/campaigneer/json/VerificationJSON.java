@@ -12,14 +12,18 @@ public class VerificationJSON {
 
     private boolean productViolation;
     private boolean purchaseDateViolation;
+    private boolean registrationDateViolation;
     private boolean traderViolation;
     private boolean localeViolation;
+    private boolean invoiceViolation;
 
-    public VerificationJSON(boolean productViolation, boolean purchaseDateViolation, boolean traderViolation, boolean localeViolation) {
+    public VerificationJSON(boolean productViolation, boolean purchaseDateViolation, boolean registrationDateViolation, boolean traderViolation, boolean localeViolation, boolean invoiceViolation) {
         this.productViolation = productViolation;
         this.purchaseDateViolation = purchaseDateViolation;
+        this.registrationDateViolation = registrationDateViolation;
         this.traderViolation = traderViolation;
         this.localeViolation = localeViolation;
+        this.invoiceViolation = invoiceViolation;
     }
 
     public VerificationJSON() {
@@ -30,7 +34,9 @@ public class VerificationJSON {
         errors.setLocaleViolation(json.isLocaleViolation());
         errors.setProductViolation(json.isProductViolation());
         errors.setPurchaseDateViolation(json.isPurchaseDateViolation());
+        errors.setRegistrationDateViolation(json.isRegistrationDateViolation());
         errors.setTraderViolation(json.isTraderViolation());
+        errors.setInvoiceViolation(json.isInvoiceViolation());
         return errors;
     }
 
@@ -50,6 +56,14 @@ public class VerificationJSON {
         this.purchaseDateViolation = purchaseDateViolation;
     }
 
+    public boolean isRegistrationDateViolation() {
+        return registrationDateViolation;
+    }
+
+    public void setRegistrationDateViolation(boolean registrationDateViolation) {
+        this.registrationDateViolation = registrationDateViolation;
+    }
+
     public boolean isTraderViolation() {
         return traderViolation;
     }
@@ -64,5 +78,13 @@ public class VerificationJSON {
 
     public void setLocaleViolation(boolean localeViolation) {
         this.localeViolation = localeViolation;
+    }
+
+    public boolean isInvoiceViolation() {
+        return invoiceViolation;
+    }
+
+    public void setInvoiceViolation(boolean invoiceViolation) {
+        this.invoiceViolation = invoiceViolation;
     }
 }

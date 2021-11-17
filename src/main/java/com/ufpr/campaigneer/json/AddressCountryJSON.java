@@ -38,6 +38,13 @@ public class AddressCountryJSON {
         return result;
     }
 
+    public static AddressCountry replace(AddressCountryJSON json) {
+        AddressCountry result = new AddressCountry();
+        if (json.getCode() != null) result.setCode(json.getCode());
+        if (json.getName() != null) result.setName(json.getName());
+        return result;
+    }
+
     @Override
     public String toString() {
         return "{" +

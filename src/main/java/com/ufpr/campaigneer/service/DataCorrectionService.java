@@ -1,6 +1,7 @@
 package com.ufpr.campaigneer.service;
 
 
+import com.ufpr.campaigneer.model.Participation;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,5 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface DataCorrectionService {
 
-    Long findByValidationCode(String validationCode);
+    Participation findByValidationCode(String validationCode);
+
+    void makeInvalid(String uuid);
 }

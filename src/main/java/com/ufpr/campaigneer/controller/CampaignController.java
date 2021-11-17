@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -48,7 +49,7 @@ public class CampaignController {
     }
 
     @PutMapping("/{id}/products/")
-    public ResponseEntity<CampaignJSON> addProducts(@PathVariable(value = "id") Long id, @RequestBody List<ProductJSON> products) throws NotFoundException {
+    public ResponseEntity<CampaignJSON> addProducts(@PathVariable(value = "id") Long id, @RequestBody Set<ProductJSON> products) throws NotFoundException {
         logger.debug("Received request to add Products to Campaign with id: " + id);
         Campaign result = service.updateProducts(id, ProductJSON.mapJson(products))
                 .orElseThrow(() -> new NotFoundException("No Campaign found with id: " + id));

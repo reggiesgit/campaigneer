@@ -6,14 +6,11 @@ import com.ufpr.campaigneer.enums.CampaignStatus;
 import com.ufpr.campaigneer.enums.ViolationType;
 import com.ufpr.campaigneer.model.*;
 import com.ufpr.campaigneer.service.ParticipationService;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.ws.rs.NotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -33,8 +30,7 @@ public class ParticipationComponent implements ParticipationService {
     AddressComponent addressComponent = new AddressComponent();
     DataCorrectionComponent correctionComponent = new DataCorrectionComponent();
     EmailComponent emailComponent = new EmailComponent();
-
-    private static final String INVOICE_FOLDER = "/invoices/";
+    InvoiceComponent invoiceComponent = new InvoiceComponent();
 
     @Override
     public Optional<Participation> create(Participation participation) {
@@ -45,7 +41,6 @@ public class ParticipationComponent implements ParticipationService {
         participation.getProducts().clear();
         participation.getProducts().add(productEntity);
         Address address = addressComponent.findBillingAddress(participation.getAddresses());
-
         Address addressEntity = addressComponent.findByPostalCodeAndNumber(address.getPostalCode(), address.getStreetNumber())
                 .orElseThrow(() -> new NotFoundException("Failed to create Address for Participation. Insuficient data."));
         participation.getAddresses().clear();
@@ -79,48 +74,70 @@ public class ParticipationComponent implements ParticipationService {
     }
 
     @Override
-    public Optional<Participation> uploadInvoice(Long id, MultipartFile invoice) throws IOException {
-        Participation part = dao.findById(id);
-
-        byte[] imgBytes = invoice.getBytes();
-        Path path = Paths.get(INVOICE_FOLDER + "invoice_" + part.getId());
-        Files.write(path, imgBytes);
-
-//        part.setInvoice64(encode(invoice));
-        return Optional.ofNullable(dao.update(part));
-    }
-
-    @Override
     public Participation reprocess(Long id) {
-        Participation part = findById(id).orElseThrow(() -> new NotFoundException("Failed to reprocess Participation. Couldn't find Participation with id: " + id));
-        if (CampaignStatus.BAD_TRADER.ordinal() > part.getCampaignStatus().ordinal()) {
-            if (part.getTriggeredCampaign() == null) {
-                part = resolveCampaing(part);
-                if (part.getCampaignStatus().equals(CampaignStatus.NO_CAMPAIGN)) {
-                    return part;
-                }
+        Participation part = findById(id)
+                .orElseThrow(() -> new NotFoundException("Failed to reprocess Participation. Couldn't find Participation with id: " + id));
+        if (part.getTriggeredCampaign() == null) {
+            part = resolveCampaing(part);
+            if (part.getCampaignStatus().equals(CampaignStatus.NO_CAMPAIGN)) {
+                emailComponent.sendNoCampaignMail(part);
+                return update(part).orElseThrow();
             }
-            part = resolveDuplicity(part);
-            if (part.getCampaignStatus().equals(CampaignStatus.DUPLICATED)) {
-                return part;
-            }
-            part = resolveParticipationDates(part);
-            if (part.getCampaignStatus().equals(CampaignStatus.BAD_REGISTRATION_DATE)
-                    || part.getCampaignStatus().equals(CampaignStatus.BAD_PURCHASE_DATE)) {
-                return part;
-            }
+        }
+        if (CampaignStatus.INVALID.ordinal() > part.getCampaignStatus().ordinal()) {
+            List<CampaignStatus> problems = new ArrayList<>();
+            resolveInvoice(part, problems);
+            resolveDuplicity(part, problems);
+            resolveParticipationDates(part, problems);
             //TODO: Add mechanic when locale and trader policies are defined.
             // part = resolveLocale(part);
             // part = resolveTrader(part);
 
-            emailComponent.sendQueueStatusMail(part);
-            return addToValidationQueue(part);
+            if (!problems.isEmpty()) {
+                String correctionCode = correctionComponent.setupCorrection(part);
+                resolveBadStatus(part, problems);
+                emailComponent.sendCorrectionStatusMail(part, resolveProblemString(problems), correctionCode);
+            } else {
+                addToValidationQueue(part);
+                emailComponent.sendEnqueuedStatusMail(part);
+            }
+            return update(part).orElseThrow();
         }
         if (CampaignStatus.VALID.equals(part.getCampaignStatus())) {
             emailComponent.sendValidStatusMail(part);
+            return part;
         }
+        return addToValidationQueue(part);
+    }
 
-        return part;
+    private void resolveInvoice(Participation part, List<CampaignStatus> problems) {
+        if (null == part.getInvoicePath()) {
+            problems.add(CampaignStatus.BAD_INVOICE);
+        } else {
+            String name = part.getInvoicePath().substring(28);
+            Resource found = invoiceComponent.load(name);
+            if (!found.exists()) {
+                problems.add(CampaignStatus.BAD_INVOICE);
+            }
+        }
+    }
+
+    private void resolveBadStatus(Participation part, List<CampaignStatus> problems) {
+        if (problems.contains(CampaignStatus.DUPLICATED)) {
+            part.setCampaignStatus(CampaignStatus.DUPLICATED);
+        } else if (problems.size() > 1) {
+            part.setCampaignStatus(CampaignStatus.INVALID);
+        } else if (!problems.isEmpty()) {
+            part.setCampaignStatus(problems.iterator().next());
+        } else {
+            part.setCampaignStatus(CampaignStatus.VALIDATION_QUEUE);
+        }
+    }
+
+    private String resolveProblemString(List<CampaignStatus> problems) {
+        StringBuffer result = new StringBuffer();
+        problems.forEach(each -> result.append(each.name() + "\n"));
+        return result.toString();
     }
 
     @Override
@@ -129,27 +146,26 @@ public class ParticipationComponent implements ParticipationService {
         return Optional.ofNullable(next);
     }
 
-
     @Override
     public Participation uptadeVerification(Long id, CampaignViolations campaignViolations) {
         Participation part = findById(id).orElseThrow(() -> new NotFoundException("Failed to reprocess Participation. Couldn't find Participation with id: " + id));
         Set<ViolationType> violations = CampaignViolations.fromAttributes(campaignViolations);
         if (violations.isEmpty()) {
             part.setCampaignStatus(CampaignStatus.VALID);
-            return update(part).orElseThrow();
         } else {
-            correctionComponent.setupCorrection(part, violations);
-            return part;
+            String correctionCode = correctionComponent.setupCorrection(part);
+            List<CampaignStatus> problems = CampaignStatus.fromViolations(part, violations);
+            emailComponent.sendCorrectionStatusMail(part, resolveProblemString(problems), correctionCode);
         }
+        return update(part).orElseThrow();
     }
 
     @Override
-    public Optional<Participation> correctData(Participation participation) {
+    public Optional<Participation> correctData(Participation participation, String uuid) {
         Participation result = update(participation).orElseThrow();
-        correctionComponent.makeInvalid(result.getId());
+        correctionComponent.makeInvalid(uuid);
         return Optional.ofNullable(result);
     }
-
 
     public Participation resolveCampaing(Participation part) {
         Campaign triggered = campaignComponent.trigger(part).orElse(null);
@@ -161,52 +177,29 @@ public class ParticipationComponent implements ParticipationService {
         return dao.update(part);
     }
 
-    public Participation resolveDuplicity(Participation part) {
+    public void resolveDuplicity(Participation part, List<CampaignStatus> problems) {
         List<Participation> single = dao.findTwinParticipations(part);
-        if (single.size()> 1) {
-            part.setCampaignStatus(CampaignStatus.DUPLICATED);
-            return dao.update(part);
+        if (single.size() > 1) {
+            problems.add(CampaignStatus.DUPLICATED);
         }
-        return part;
     }
 
-    private Participation resolveParticipationDates(Participation part) {
-        boolean changedStatus = false;
+    private void resolveParticipationDates(Participation part, List<CampaignStatus> problems) {
         Campaign triggered = part.getTriggeredCampaign();
         boolean afterStart = triggered.getValidFrom().isBefore(part.getCreated().toLocalDateTime().toLocalDate());
         boolean beforeEnd = triggered.getValidUntil().isAfter(part.getCreated().toLocalDateTime().toLocalDate());
         boolean afterPurchaseStart = triggered.getPurchaseFrom().isBefore(part.getInvoiceDate());
         boolean beforePurchaseEnd = triggered.getPurchaseFrom().isAfter(part.getInvoiceDate());
         if (!afterStart || !beforeEnd) {
-            part.setCampaignStatus(CampaignStatus.BAD_REGISTRATION_DATE);
-            changedStatus = true;
+            problems.add(CampaignStatus.BAD_REGISTRATION_DATE);
         }
         if (!afterPurchaseStart || beforePurchaseEnd) {
-            part.setCampaignStatus(CampaignStatus.BAD_PURCHASE_DATE);
-            changedStatus = true;
+            problems.add(CampaignStatus.BAD_PURCHASE_DATE);
         }
-        if (changedStatus) {
-            part = dao.update(part);
-        }
-        return part;
 
     }
     private Participation addToValidationQueue(Participation part) {
         part.setCampaignStatus(CampaignStatus.VALIDATION_QUEUE);
         return dao.update(part);
     }
-
-//    private String encode(MultipartFile invoice) throws IOException {
-//        byte[] fileContent = invoice.getBytes();
-//        return Base64.getEncoder().encodeToString(fileContent);
-//    }
-//
-//    private MultipartFile decode(String invoice64) throws IOException {
-//        byte[] data = Base64.getDecoder().decode(invoice64);
-//        try (OutputStream stream = new FileOutputStream("img/invoice.png")) {
-//            stream.write(data);
-//
-//        }
-//        return new CommonsMultipartFile(tempFile);
-//    }
 }

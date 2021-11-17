@@ -24,13 +24,11 @@ public interface ParticipationService {
     Optional<Participation> findById(Long id);
     Optional<Participation> findByEmail(String email);
 
-    Optional<Participation> uploadInvoice(Long id, MultipartFile invoice) throws IOException;
-
     Participation reprocess(Long id);
 
     Optional<Participation> retrieveFromCorrectionQueue(Long campaignId);
 
     Participation uptadeVerification(Long id, CampaignViolations violations);
 
-    Optional<Participation> correctData(Participation mapJson);
+    Optional<Participation> correctData(Participation mapJson, String uuid);
 }

@@ -40,6 +40,13 @@ public class AddressCityJSON {
         return json;
     }
 
+    public static AddressCity replace(AddressCityJSON json) {
+        AddressCity result = new AddressCity();
+        if (json.getName() != null) result.setName(json.getName());
+        if (json.getStateJSON() != null) result.setState(AddressStateJSON.replace(json.getStateJSON()));
+        return result;
+    }
+
     public Long getId() {
         return id;
     }
