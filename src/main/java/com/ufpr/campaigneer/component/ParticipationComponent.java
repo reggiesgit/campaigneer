@@ -152,6 +152,7 @@ public class ParticipationComponent implements ParticipationService {
         Set<ViolationType> violations = CampaignViolations.fromAttributes(campaignViolations);
         if (violations.isEmpty()) {
             part.setCampaignStatus(CampaignStatus.VALID);
+            emailComponent.sendValidStatusMail(part);
         } else {
             String correctionCode = correctionComponent.setupCorrection(part);
             List<CampaignStatus> problems = CampaignStatus.fromViolations(part, violations);

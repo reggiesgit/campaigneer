@@ -33,7 +33,7 @@ public class ProductController {
     @PostMapping("/")
     public ResponseEntity<ProductJSON> create(@RequestBody ProductJSON json) throws SQLException, NotFoundException {
         logger.debug("Received request to create Product with ean: " + json.getEan());
-        Product result = service.create(ProductJSON.mapJson(json)).orElse(null);
+        Product result = service.create(ProductJSON.mapJson(json)).orElseThrow();
         return ResponseEntity.ok(ProductJSON.map(result));
     }
 

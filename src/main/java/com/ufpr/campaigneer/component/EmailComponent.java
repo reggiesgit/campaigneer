@@ -1,18 +1,16 @@
 package com.ufpr.campaigneer.component;
 
-import com.ufpr.campaigneer.enums.CampaignStatus;
 import com.ufpr.campaigneer.model.Participation;
+import com.ufpr.campaigneer.utils.EmailKeys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -30,7 +28,7 @@ public class EmailComponent {
     private JavaMailSender emailSender;
 
     public void sendNoCampaignMail(Participation participation) {
-        emailSender = getJavaMailSender();
+        emailSender = EmailKeys.getJavaMailSender();
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setFrom("regisandre@ufpr.br");
         mail.setTo(participation.getEmail());
@@ -47,7 +45,7 @@ public class EmailComponent {
     }
 
     public void sendEnqueuedStatusMail(Participation participation) {
-        emailSender = getJavaMailSender();
+        emailSender = EmailKeys.getJavaMailSender();
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setFrom("regisandre@ufpr.br");
         mail.setTo(participation.getEmail());
@@ -65,7 +63,6 @@ public class EmailComponent {
     }
 
     public void sendCorrectionStatusMail(Participation participation, String problems, String codigo) {
-        emailSender = getJavaMailSender();
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setFrom("regisandre@ufpr.br");
         mail.setTo(participation.getEmail());
@@ -85,7 +82,7 @@ public class EmailComponent {
     }
 
     public void sendValidStatusMail(Participation participation) {
-        emailSender = getJavaMailSender();
+        emailSender = EmailKeys.getJavaMailSender();
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setFrom("regisandre@ufpr.br");
         mail.setTo(participation.getEmail());
@@ -101,22 +98,4 @@ public class EmailComponent {
             e.printStackTrace();
         }
     }
-
-    public JavaMailSender getJavaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp-mail.outlook.com");
-        mailSender.setPort(587);
-
-        mailSender.setUsername("regisandre@ufpr.br");
-        mailSender.setPassword("v=YDHxT4UT8N");
-
-        Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
-
-        return mailSender;
-    }
-
 }

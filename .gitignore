@@ -7,6 +7,7 @@ target/
 ### Local things ###
 src/main/resources/invoices/
 src/main/resources/application.properties
+src/main/java/com/ufpr/campaigneer/utils/EmailKeys.java
 
 ### STS ###
 .apt_generated

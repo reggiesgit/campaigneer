@@ -1,12 +1,9 @@
 package com.ufpr.campaigneer.json;
 
 import com.ufpr.campaigneer.enums.ClassOfGood;
-import com.ufpr.campaigneer.model.Brand;
 import com.ufpr.campaigneer.model.Product;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,7 +37,9 @@ public class ProductJSON {
         result.setName(json.getName());
         result.setClassOfGood(json.getClassOfGood());
         result.setEan(json.getEan());
-        result.setManufacturer(BrandJSON.mapJson(json.getManufacturer()));
+        if (json.getManufacturer() != null) {
+            result.setManufacturer(BrandJSON.mapJson(json.getManufacturer()));
+        }
         return result;
     }
 

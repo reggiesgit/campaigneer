@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.ws.rs.Consumes;
 import java.io.IOException;
 
 /**
@@ -68,7 +67,7 @@ public class ParticipationController {
     }
 
     @PutMapping("/{id}/invoice")
-    public ResponseEntity<ParticipationJSON> uploadInvoice(@PathVariable(value = "id") Long id, @RequestParam MultipartFile invoice) throws NotFoundException, IOException {
+    public ResponseEntity<ParticipationJSON> uploadInvoice(@PathVariable(value = "id") Long id, @RequestParam MultipartFile invoice) {
         logger.debug("Received request to update Participation with id: " + id);
         Participation part = service.findById(id).orElseThrow();
         part.setInvoicePath(invoiceService.triggerAndSave(part, invoice));

@@ -30,7 +30,9 @@ public class BrandJSON {
         Brand result = new Brand();
         result.setId(json.getId());
         result.setName(json.getName());
-        result.setAddresses(AddressJSON.mapJson(json.getAddresses()));
+        if (json.getAddresses() != null) {
+            result.setAddresses(AddressJSON.mapJson(json.getAddresses()));
+        }
         return result;
     }
 

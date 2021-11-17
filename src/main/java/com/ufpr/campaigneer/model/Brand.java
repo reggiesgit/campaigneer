@@ -3,8 +3,7 @@ package com.ufpr.campaigneer.model;
 import com.ufpr.campaigneer.enums.AddressType;
 
 import javax.persistence.*;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
 
 /**

@@ -3,9 +3,7 @@ package com.ufpr.campaigneer.service;
 import com.ufpr.campaigneer.model.CampaignViolations;
 import com.ufpr.campaigneer.model.Participation;
 import org.jvnet.hk2.annotations.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Optional;
 
 /**

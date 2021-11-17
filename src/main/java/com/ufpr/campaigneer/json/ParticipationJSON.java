@@ -1,7 +1,6 @@
 package com.ufpr.campaigneer.json;
 
 import com.ufpr.campaigneer.enums.CampaignStatus;
-import com.ufpr.campaigneer.model.Address;
 import com.ufpr.campaigneer.model.Campaign;
 import com.ufpr.campaigneer.model.Participation;
 

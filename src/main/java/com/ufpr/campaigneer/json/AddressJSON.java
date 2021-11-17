@@ -42,7 +42,9 @@ public class AddressJSON {
         result.setStreetName(json.getStreetName());
         result.setStreetNumber(json.getStreetNumber());
         result.setComplement(json.getComplement());
-        result.setCity(AddressCityJSON.map(json.getCityJSON()));
+        if (json.getCityJSON() != null) {
+            result.setCity(AddressCityJSON.map(json.getCityJSON()));
+        }
         return result;
     }
 

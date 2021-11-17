@@ -1,8 +1,6 @@
 package com.ufpr.campaigneer.model;
 
 import com.ufpr.campaigneer.enums.CampaignStatus;
-import com.ufpr.campaigneer.json.AddressJSON;
-import com.ufpr.campaigneer.json.ProductJSON;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 
