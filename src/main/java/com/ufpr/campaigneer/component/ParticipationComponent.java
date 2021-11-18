@@ -10,10 +10,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.NotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * Created by Regis Gaboardi (@gmail.com)
@@ -107,7 +105,21 @@ public class ParticipationComponent implements ParticipationService {
             emailComponent.sendValidStatusMail(part);
             return part;
         }
+        if (CampaignStatus.PAID.equals(part.getCampaignStatus())) {
+            emailComponent.sendPaidStatusMail(part);
+            return part;
+        }
         return addToValidationQueue(part);
+    }
+
+    protected void anonimize(Participation participation) {
+        participation.setDeleted(new Timestamp(new Date().getTime()));
+        participation.setInvoicePath("Process finished");
+        participation.setContact(String.valueOf(Math.random()));
+        participation.setEmail(String.valueOf(Math.random()));
+        participation.setName(String.valueOf(Math.random()));
+        participation.setLastName(String.valueOf(Math.random()));
+        update(participation);
     }
 
     private void resolveInvoice(Participation part, List<CampaignStatus> problems) {
@@ -156,6 +168,7 @@ public class ParticipationComponent implements ParticipationService {
         } else {
             String correctionCode = correctionComponent.setupCorrection(part);
             List<CampaignStatus> problems = CampaignStatus.fromViolations(part, violations);
+            part.setCampaignStatus(CampaignStatus.CORRECTION_QUEUE);
             emailComponent.sendCorrectionStatusMail(part, resolveProblemString(problems), correctionCode);
         }
         return update(part).orElseThrow();
@@ -166,6 +179,14 @@ public class ParticipationComponent implements ParticipationService {
         Participation result = update(participation).orElseThrow();
         correctionComponent.makeInvalid(uuid);
         return Optional.ofNullable(result);
+    }
+
+    @Override
+    public void setPaid(Long id) {
+        Participation part = findById(id).orElseThrow(() -> new NotFoundException("Failed to reprocess Participation. Couldn't find Participation with id: " + id));
+        part.setCampaignStatus(CampaignStatus.PAID);
+
+        update(part);
     }
 
     public Participation resolveCampaing(Participation part) {
@@ -202,5 +223,9 @@ public class ParticipationComponent implements ParticipationService {
     private Participation addToValidationQueue(Participation part) {
         part.setCampaignStatus(CampaignStatus.VALIDATION_QUEUE);
         return dao.update(part);
+    }
+
+    protected List<Participation> findAllPaid() {
+       return dao.findAllPaid();
     }
 }

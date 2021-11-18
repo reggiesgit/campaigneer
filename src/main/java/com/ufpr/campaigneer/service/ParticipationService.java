@@ -29,4 +29,6 @@ public interface ParticipationService {
     Participation uptadeVerification(Long id, CampaignViolations violations);
 
     Optional<Participation> correctData(Participation mapJson, String uuid);
+
+    void setPaid(Long id);
 }

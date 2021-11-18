@@ -57,7 +57,11 @@ public class DataCorrectionComponent implements DataCorrectionService {
         if (correction.isValid()) {
             Participation valid = participationComponent.findById(correction.getParticipation().getId())
                     .orElseThrow(() -> new NotFoundException("No Participation eligible for correction found."));
-            return valid;
+            if (CampaignStatus.CORRECTION_QUEUE.equals(valid.getCampaignStatus())) {
+                return valid;
+            } else {
+                throw new ForbiddenException("This Participation is not eligible for correction because it isn't in the Correction Queue.");
+            }
         } else {
             throw new ForbiddenException("This Participation is not eligible for correction");
         }

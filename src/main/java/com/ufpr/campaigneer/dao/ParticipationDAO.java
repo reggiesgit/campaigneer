@@ -141,4 +141,21 @@ public class ParticipationDAO {
             session.close();
         }
     }
+
+    public List<Participation> findAllPaid() {
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            Query query = session
+                    .createQuery("from Participation part " +
+                            "where part.campaignStatus = :status " +
+                            "and part.deleted is null ");
+            query.setParameter("status", CampaignStatus.PAID);
+            List<Participation> result = query.getResultList();
+            return result;
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
+    }
 }

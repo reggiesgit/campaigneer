@@ -98,4 +98,41 @@ public class EmailComponent {
             e.printStackTrace();
         }
     }
+
+    public void sendPaidStatusMail(Participation participation) {
+        emailSender = EmailKeys.getJavaMailSender();
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setFrom("regisandre@ufpr.br");
+        mail.setTo(participation.getEmail());
+        mail.setSubject("O pagamento de sua Participação chegou!");
+        mail.setText("Prezado(a) " + participation.getName() + "\n\n" +
+                "O premio de sua Participação para a Campanha " + participation.getTriggeredCampaign().getName() +
+                " foi processado e deve estar disponivel entre 3 e 5 dias úteis. \n" +
+                "Observe que, caso haja um envio pelo Correios envolvido, esse tempo pode ser maior.\n" +
+                "Cordialmente, o Campanheiro.");
+        try {
+            emailSender.send(mail);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendClosedStatusMail(Participation participation) {
+        emailSender = EmailKeys.getJavaMailSender();
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setFrom("regisandre@ufpr.br");
+        mail.setTo(participation.getEmail());
+        mail.setSubject("Estamos encerrando Participação");
+        mail.setText("Prezado(a) " + participation.getName() + "\n\n" +
+                "O premio de sua Participação para a Campanha " + participation.getTriggeredCampaign().getName() +
+                " já foi entregue. \n" +
+                "Considerando as leis vigentes, seus dados não são mais necessários para esta Participação.\n" +
+                "Estaremos agora anonimizando as suas informações e encerrando sua Participação nesta Campanha. \n\n" +
+                "Cordialmente, o Campanheiro.");
+        try {
+            emailSender.send(mail);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

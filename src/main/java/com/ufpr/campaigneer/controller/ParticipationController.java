@@ -108,4 +108,12 @@ public class ParticipationController {
         return ResponseEntity.ok(ParticipationJSON.map(result));
     }
 
+    @PutMapping("/{id}/pay")
+    public ResponseEntity<ParticipationJSON> payOne(@PathVariable(value = "id") Long id) {
+        logger.debug("Received order of payment for Participation with id: " + id);
+        service.setPaid(id);
+        Participation result = service.reprocess(id);
+        return ResponseEntity.ok(ParticipationJSON.map(result));
+    }
+
 }
