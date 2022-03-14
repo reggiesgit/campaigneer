@@ -1,5 +1,6 @@
 package com.ufpr.campaigneer.dao;
 
+import com.ufpr.campaigneer.json.CampaignReportJSON;
 import com.ufpr.campaigneer.model.Campaign;
 import com.ufpr.campaigneer.model.Participation;
 import com.ufpr.campaigneer.model.Product;

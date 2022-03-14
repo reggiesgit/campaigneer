@@ -1,9 +1,13 @@
 package com.ufpr.campaigneer.dao;
 
 import com.ufpr.campaigneer.enums.CampaignStatus;
+import com.ufpr.campaigneer.json.CampaignReportJSON;
+import com.ufpr.campaigneer.model.Campaign;
 import com.ufpr.campaigneer.model.Participation;
 import com.ufpr.campaigneer.utils.HibernateUtils;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 
 import java.sql.Timestamp;
@@ -151,6 +155,23 @@ public class ParticipationDAO {
                             "where part.campaignStatus = :status " +
                             "and part.deleted is null ");
             query.setParameter("status", CampaignStatus.PAID);
+            List<Participation> result = query.getResultList();
+            return result;
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
+    }
+
+    public List<Participation> findAllByCampanign(Long campaignId) {
+        try {
+            session = HibernateUtils.initSession();
+            session.beginTransaction();
+            Query query = session
+                    .createQuery("from Participation part " +
+                            "where part.triggeredCampaign.id = :campaignId " +
+                            "and part.deleted is null");
+            query.setParameter("campaignId", campaignId);
             List<Participation> result = query.getResultList();
             return result;
         } finally {

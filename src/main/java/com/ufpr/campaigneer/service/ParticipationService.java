@@ -30,5 +30,5 @@ public interface ParticipationService {
 
     Optional<Participation> correctData(Participation mapJson, String uuid);
 
-    void setPaid(Long id);
+    Participation setPaid(Long id);
 }

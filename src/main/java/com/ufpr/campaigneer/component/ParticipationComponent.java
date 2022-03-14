@@ -10,7 +10,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.NotFoundException;
-import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -109,11 +108,13 @@ public class ParticipationComponent implements ParticipationService {
             emailComponent.sendPaidStatusMail(part);
             return part;
         }
+        if (CampaignStatus.CLOSED.equals(part.getCampaignStatus())) {
+            return part;
+        }
         return addToValidationQueue(part);
     }
 
     protected void anonimize(Participation participation) {
-        participation.setDeleted(new Timestamp(new Date().getTime()));
         participation.setInvoicePath("Process finished");
         participation.setContact(String.valueOf(Math.random()));
         participation.setEmail(String.valueOf(Math.random()));
@@ -182,11 +183,11 @@ public class ParticipationComponent implements ParticipationService {
     }
 
     @Override
-    public void setPaid(Long id) {
+    public Participation setPaid(Long id) {
         Participation part = findById(id).orElseThrow(() -> new NotFoundException("Failed to reprocess Participation. Couldn't find Participation with id: " + id));
         part.setCampaignStatus(CampaignStatus.PAID);
-
         update(part);
+        return reprocess(id);
     }
 
     public Participation resolveCampaing(Participation part) {

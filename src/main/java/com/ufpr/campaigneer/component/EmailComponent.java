@@ -63,6 +63,7 @@ public class EmailComponent {
     }
 
     public void sendCorrectionStatusMail(Participation participation, String problems, String codigo) {
+        emailSender = EmailKeys.getJavaMailSender();
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setFrom("regisandre@ufpr.br");
         mail.setTo(participation.getEmail());
