@@ -23,6 +23,10 @@ public class Brand extends BasicModel {
             joinColumns = { @JoinColumn(name = "brand_id", foreignKey = @ForeignKey(name ="brand_fk")) },
             inverseJoinColumns = { @JoinColumn(name = "address_id", foreignKey = @ForeignKey(name ="address_fk")) })
     private Set<Address> addresses;
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Brand parent;
+    private boolean isFilial;
 
     public Brand(String name, Set<Address> addresses) {
         this.name = name;
@@ -46,6 +50,18 @@ public class Brand extends BasicModel {
 
     public void setAddresses(Set<Address> addresses) {
         this.addresses = addresses;
+    }
+
+    public Brand getParent() {
+        return parent;
+    }
+
+    public void setParent(Brand parent) {
+        this.parent = parent;
+    }
+
+    public boolean isFilial() {
+        return null != this.getParent() ;
     }
 
     public Address findMainAddress() {
